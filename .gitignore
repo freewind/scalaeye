@@ -1,4 +1,6 @@
 /target
 /.classpath
 /.project
+/.externalToolBuilders/lib_managed
+/lib_managed
 /.externalToolBuilders

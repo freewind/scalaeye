@@ -2,6 +2,8 @@ import sbt._
 
 class ScalaeyeProject(info: ProjectInfo) extends DefaultWebProject(info) {
 
+	lazy val demo = project("demo", "Demo of ScalaEye")
+
 	override val jettyPort = 8080
 
 	override def libraryDependencies = Set(
@@ -19,7 +21,7 @@ class ScalaeyeProject(info: ProjectInfo) extends DefaultWebProject(info) {
 		"junit" % "junit" % "4.5" % "test->default",
 
 		"postgresql" % "postgresql" % "9.0-801.jdbc4" % "compile->default" // "p6spy" % "p6spy" % "1.3" % "test->default"
-	) ++ super.libraryDependencies
+) ++ super.libraryDependencies
 
 	// to work with jrebel
 	override def scanDirectories = Nil

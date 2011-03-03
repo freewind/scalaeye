@@ -16,7 +16,8 @@ class ScalaeyeProject(info: ProjectInfo) extends DefaultWebProject(info) {
 		// "commons-codec" % "commons-codec" % "1.4" % "compile->default",
 		// "commons-collections" % "commons-collections" % "3.2.1" % "compile->default",
 
-		"org.mortbay.jetty" % "jetty" % "6.1.25" % "compile->default",
+		"org.mortbay.jetty" % "jetty" % "6.1.25" % "compile->default", // 用于编译
+		"org.mortbay.jetty" % "jetty" % "6.1.25" % "test->default", // 用于sbt的jetty-run
 		"org.scalatest" % "scalatest" % "1.2" % "test->default",
 		"junit" % "junit" % "4.5" % "test->default",
 

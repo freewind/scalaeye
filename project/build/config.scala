@@ -29,5 +29,6 @@ class ScalaeyeProject(info: ProjectInfo) extends DefaultWebProject(info) {
 	// to work with jrebel
 	// override def scanDirectories = Nil
 
-	override def compileOptions = super.compileOptions ++ compileOptions("-encoding", "utf8")
+	// 解决编译java文件时，未使用utf8字符集导致中文乱码的问题
+	override def javaCompileOptions = super.javaCompileOptions ++ javaCompileOptions("-encoding", "utf8")
 }

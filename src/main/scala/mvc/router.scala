@@ -135,14 +135,14 @@ object Router {
 	def apply(pattern: String, action: Action, method: String = "any") = new Router(pattern, action, method)
 
 	/** 插入到列表前（优先级高）*/
-	def prepend(pattern: String, action: => Any, method: String) {
-		val router = Router(pattern, () => action, method)
+	def prepend(pattern: String, action: Action, method: String) {
+		val router = Router(pattern, action, method)
 		router +=: routers
 	}
 
 	/** 插入到列表后（优先级低）*/
-	def append(pattern: String, action: => Any, method: String) {
-		val router = Router(pattern, () => action, method)
+	def append(pattern: String, action: Action, method: String) {
+		val router = Router(pattern, action, method)
 		routers += router
 	}
 

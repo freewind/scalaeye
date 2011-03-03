@@ -66,7 +66,7 @@ class WebFilter extends Filter {
 						// FIXME
 						// 这里有问题，如果是通过get()/post()等方式定义的，可以被正确调用
 						// 但如果对应的是controller中的某方法，则无法调用，怎么办？
-						act()
+						act.perform()
 					}
 					case _ => println("No router found")
 				}

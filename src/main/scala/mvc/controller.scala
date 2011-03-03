@@ -29,11 +29,11 @@ import java.lang.reflect._
 abstract class Controller(pathPrefix: String = "") extends Init {
 
 	/** 通过直接调用的方式增加route，它们将依次加入到route列表的最后*/
-	def any(route: String)(action: => Any) = { Router.append(pathPrefix + route, action, "any") }
-	def get(route: String)(action: => Any) = { Router.append(pathPrefix + route, action, "get") }
-	def post(route: String)(action: => Any) = { Router.append(pathPrefix + route, action, "post") }
-	def put(route: String)(action: => Any) = { Router.append(pathPrefix + route, action, "put") }
-	def delete(route: String)(action: => Any) = { Router.append(pathPrefix + route, action, "delete") }
+	def any(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "any") }
+	def get(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "get") }
+	def post(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "post") }
+	def put(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "put") }
+	def delete(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "delete") }
 
 	/** 该方法将在web server启动时被调用。用于查找所有的public函数及其注解，增加对应的route规则 */
 	override def init() {
@@ -55,7 +55,9 @@ abstract class Controller(pathPrefix: String = "") extends Init {
 				}
 			}
 			// 由方法定义route具有优先仅，所以使用prepend放在前面
-			Router.prepend(pathPrefix + route, m, method)
+			Router.prepend(pathPrefix + route, new Action() { def perform() {
+				m.invoke(this)
+			}}, method)
 		}
 	}
 }

@@ -5,7 +5,9 @@ import scala.util.DynamicVariable
 
 package object mvc {
 
-	type Action = () => Any
+	trait Action {
+		def perform()
+	}
 
 	/** 常用的隐式转换 */
 	implicit def request2rich(request: HttpServletRequest) = new RichRequest(request)

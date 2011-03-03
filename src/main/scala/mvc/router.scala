@@ -1,5 +1,6 @@
-package scalaeye.mvc
+package org.scalaeye
 
+import org.scalaeye._, mvc._
 import java.util.regex.Pattern
 import scala.util.matching.Regex, Regex.Match
 import scala.collection._
@@ -58,7 +59,7 @@ import scala.collection._
 //
 // 线程安全:
 // 该类不可变，线程安全
-class Router(pattern: String) {
+class Router(val pattern: String, val action: Action, val method: String = "any") {
 
 	/** 用于取得route中的变量(被包含在{}内)的正则*/
 	private val varPattern = """\{([^/]+?)\}""".r
@@ -78,11 +79,8 @@ class Router(pattern: String) {
 		// 增加\Q\E
 		var x = (pattern.stripSuffix("/").split("[{}]").zipWithIndex collect {
 			case (item, i) => {
-				if (i % 2 == 0) {
-					"""\Q"""+item+"""\E"""
-				} else {
-					"{"+item+"}"
-				}
+				if (i % 2 == 0) """\Q"""+item+"""\E"""
+				else "{"+item+"}"
 			}
 		}).mkString
 
@@ -109,23 +107,62 @@ class Router(pattern: String) {
 		new Regex(regexString, paramNames: _*)
 	}
 
-	/** 使用regex对象，解析某url。如果成功，则返回(true, params)，否则返回(false, Map()) */
-	def parse(url: String): Tuple2[Boolean, Map[String, String]] = {
+	/** 使用regex对象，解析某url。如果成功，则返回Some(params)，否则返回None */
+	def parse(url: String, method: String = "any"): Option[Map[String, String]] = {
+		if (this.method != "any" && this.method != method) return None
 		regexPattern.findFirstMatchIn(url.stripSuffix("/")) match {
 			case Some(m) => {
 				val list = paramNames map (name => name -> m.group(name))
-				if (list exists (_._2 == "")) (false, Map())
-				else (true, Map(list: _*))
+				if (list exists (_._2 == "")) None
+				else Some(Map(list: _*))
 			}
-			case _ => (false, Map())
+			case _ => None
 		}
 	}
 
+	override def toString = method+" : "+pattern
 }
 
 /**
  * 可使用Rouetr("/users/{id}")的方式生成Router
  */
 object Router {
-	def apply(pattern: String) = new Router(pattern)
+
+	/** 用于保存route规则*/
+	val routers = mutable.ListBuffer[Router]()
+
+	/** 使用Router()来创建新Router */
+	def apply(pattern: String, action: Action, method: String = "any") = new Router(pattern, action, method)
+
+	/** 插入到列表前（优先级高）*/
+	def prepend(pattern: String, action: => Any, method: String) {
+		val router = Router(pattern, () => action, method)
+		router +=: routers
+	}
+
+	/** 插入到列表后（优先级低）*/
+	def append(pattern: String, action: => Any, method: String) {
+		val router = Router(pattern, () => action, method)
+		routers += router
+	}
+
+	/** 寻找合适的Router，如果找不到，返回None */
+	def findMatch(method: String, url: String): Option[MatchData] = {
+		for (router <- routers) {
+			val params = router.parse(url, method.toLowerCase)
+			if (params != None) {
+				return Some(new MatchData(router, params.get))
+			}
+		}
+		None
+	}
+
+	/** 得到当前routers列表的拷贝*/
+	def getRouters = {
+		List() ++ routers
+	}
 }
+
+/** 用于保存match结果 */
+case class MatchData(router: Router, params: Map[String, String])
+

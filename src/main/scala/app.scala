@@ -1,29 +1,30 @@
-package scalaeye
+package org.scalaeye
 
-import scalaeye._, mvc._
-import org.eclipse.jetty.servlet.{ ServletContextHandler, ServletHolder }
-import org.eclipse.jetty.server.Server
+import org.scalaeye._, mvc._
 
-object JettyRunner {
-	def run() = {
-		println("### start jetty: " + AppConfig.port)
-		val server = new Server(AppConfig.port)
-		val context = new ServletContextHandler
-		context.setContextPath("/")
-		server.setHandler(context)
-		context.addServlet(new ServletHolder(new DispatcherServlet()), "/*")
-		println("### added servlet")
-		server.start
-		println("### started")
-		server.join
+/** 测试类。定义了几个route，可通过浏览器访问，查看效果 */
+class UsersController extends Controller("/users") {
+
+	/** 该功能正确实现 */
+	get("/") {
+		println("in users controller")
+		response.getOutputStream.write("Hello, ScalaEye, in /users/".getBytes)
+		response.getOutputStream.flush()
 	}
-}
 
-object App {
-	def run(port: Int = 8080) {
-		JettyRunner.run()
+	/**
+	 * FIXME
+	 * 后面两个，可以正确路由，但是函数体却不执行
+	 */
+	def xxx(id: Int) {
+
 	}
-	def main(args: Array[String]) {
-		run()
+
+	@any("/aaa")
+	def abc() {
+		println("in /users/aaa")
+		response.setContentType("text/html")
+		response.getOutputStream.write("Hello, ScalaEye".getBytes)
+		response.getOutputStream.flush()
 	}
 }

@@ -20,9 +20,12 @@ class ScalaeyeProject(info: ProjectInfo) extends DefaultWebProject(info) {
 		"org.scalatest" % "scalatest" % "1.2" % "test->default",
 		"junit" % "junit" % "4.5" % "test->default",
 
-		"postgresql" % "postgresql" % "9.0-801.jdbc4" % "compile->default" // "p6spy" % "p6spy" % "1.3" % "test->default"
-) ++ super.libraryDependencies
+		"postgresql" % "postgresql" % "9.0-801.jdbc4" % "compile->default",
+		// "p6spy" % "p6spy" % "1.3" % "test->default"
+
+		"org.clapper" %% "classutil" % "0.3.4" % "compile->default" //
+		) ++ super.libraryDependencies
 
 	// to work with jrebel
-	override def scanDirectories = Nil
+	// override def scanDirectories = Nil
 }

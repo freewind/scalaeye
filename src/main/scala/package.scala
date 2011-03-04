@@ -1,6 +1,7 @@
 package org
 
 import javax.servlet._, http._
+import scala.collection._
 
 package object scalaeye {
 

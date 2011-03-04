@@ -2,6 +2,7 @@ package org.scalaeye.mvc
 
 import org.scalaeye._, mvc._
 import java.lang.reflect._
+import scalaj.reflect._
 
 /**
  * 重要的基类。用户须继承该类，才可以定义自己的route。构造函数的参数，表示url的前缀。
@@ -29,11 +30,11 @@ import java.lang.reflect._
 abstract class Controller(pathPrefix: String = "") extends Init {
 
 	/** 通过直接调用的方式增加route，它们将依次加入到route列表的最后*/
-	def any(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "any") }
-	def get(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "get") }
-	def post(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "post") }
-	def put(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "put") }
-	def delete(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() {action}}, "delete") }
+	def any(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() { action } }, "any") }
+	def get(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() { action } }, "get") }
+	def post(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() { action } }, "post") }
+	def put(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() { action } }, "put") }
+	def delete(route: String)(action: => Any) = { Router.append(pathPrefix + route, new Action() { def perform() { action } }, "delete") }
 
 	val THIS = this
 
@@ -56,8 +57,45 @@ abstract class Controller(pathPrefix: String = "") extends Init {
 					case _ =>
 				}
 			}
+
 			// 由方法定义route具有优先仅，所以使用prepend放在前面
-			Router.prepend(pathPrefix + route, new Action() { def perform() { m.invoke(THIS) }}, method)
+			Router.prepend(pathPrefix + route, new Action() {
+				def perform() {
+					m.invoke(THIS, getParamsForMethod(m): _*)
+				}
+			}, method)
 		}
 	}
+
+	private def getParamsForMethod(m: Method): Seq[AnyRef] = {
+		val nameTypes = getParamNamesTypes(m)
+		println("### name types: "+nameTypes)
+		val values = getParamNamesTypes(m) map {
+			case (name, paramType) =>
+				paramType match {
+					case "String" => param(name)
+					case "Int" => java.lang.Integer.valueOf(param(name))
+					case "Short" => java.lang.Short.valueOf(param(name))
+					case "Long" => java.lang.Long.valueOf(param(name))
+					// case "Char" => java.lang.Character.valueOf(param(name))
+					case "Double" => java.lang.Double.valueOf(param(name))
+					case "Float" => java.lang.Float.valueOf(param(name))
+					case "Boolean" => java.lang.Boolean.valueOf(param(name))
+
+					// case "Byte" => getaram(name).toByte
+					// others
+					case _ => null
+				}
+		}
+		values
+	}
+
+	private def getParamNamesTypes(method: Method): Seq[Tuple2[String, String]] = {
+		for {
+			clazz <- Mirror.ofClass(method.getDeclaringClass).toSeq
+			method <- clazz.allDefs.find(_.name == method.getName).toSeq
+			param <- method.flatParams
+		} yield (param.name, param.symType.toString)
+	}
+
 }

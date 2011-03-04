@@ -8,15 +8,16 @@ class UsersController extends Controller("/users") {
 	/** 该功能正确实现 */
 	get("/") {
 		println("in users controller")
-		response.getOutputStream.write("Hello, ScalaEye, in /users/".getBytes)
+		response.getOutputStream.write(("Hello, ScalaEye, in /users/: "+param("a")).getBytes)
 		response.getOutputStream.flush()
 	}
 
 	/**
-	 * FIXME
-	 * 后面两个，可以正确路由，但是函数体却不执行
 	 */
 	def xxx(id: Int) {
+		response.setContentType("text/html")
+		response.getOutputStream.write(("Hello, ScalaEye, /users/xxx, id: "+id).getBytes)
+		response.getOutputStream.flush()
 
 	}
 

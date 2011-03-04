@@ -3,6 +3,8 @@ package org.scalaeye.mvc
 import org.scalaeye._, mvc._
 import javax.servlet.{ Filter, FilterConfig, FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.clapper.classutil._
+import java.io._
 
 /**
  * 该类将被当作应用的启动类，定义在web.xml中。它的init方法，被在web app启动时被调用（仅一次）
@@ -27,9 +29,6 @@ class WebFilter extends Filter {
 
 	/** 初始化函数，将在web app启动时被调用一次 */
 	def init(filterConfig: FilterConfig) {
-		import org.clapper.classutil._
-		import java.io._
-
 		// 在用户代码(WEB-INF/classes)中，寻找所有继承了org.scalaeye.Init的类，并执行相应初始化函数
 		val classesDir = filterConfig.getServletContext.getRealPath("WEB-INF/classes")
 		val finder = ClassFinder(List(new File(classesDir)))
@@ -62,11 +61,11 @@ class WebFilter extends Filter {
 				// 即get()/post()等函数最后一个参数体，或controller中的各public方法
 				Router.findMatch(method, uri) match {
 					case Some(data) => {
-						val act = data.router.action
-						// FIXME
-						// 这里有问题，如果是通过get()/post()等方式定义的，可以被正确调用
-						// 但如果对应的是controller中的某方法，则无法调用，怎么办？
-						act.perform()
+						val allParams = request.getParams() ++ (data.params transform { (k,v) => Seq(v)})
+						_params.withValue(allParams) {
+							val action = data.router.action
+							action.perform()
+						}
 					}
 					case _ => println("No router found")
 				}
@@ -91,5 +90,6 @@ class WebFilter extends Filter {
 		//		println("request.getRequestURI()"+request.getRequestURI())
 		//		println("request.getServletPath()"+request.getServletPath())
 	}
+
 }
 

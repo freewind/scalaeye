@@ -3,7 +3,7 @@ package org.scalaeye
 import org.scalaeye._, mvc._
 import java.util.regex.Pattern
 import scala.util.matching.Regex, Regex.Match
-import scala.collection._
+import scala.collection.mutable.ListBuffer
 
 // MVC框架的重点之一：路由。
 //
@@ -129,7 +129,7 @@ class Router(val pattern: String, val action: Action, val method: String = "any"
 object Router {
 
 	/** 用于保存route规则*/
-	val routers = mutable.ListBuffer[Router]()
+	val routers = ListBuffer[Router]()
 
 	/** 使用Router()来创建新Router */
 	def apply(pattern: String, action: Action, method: String = "any") = new Router(pattern, action, method)
@@ -159,7 +159,7 @@ object Router {
 
 	/** 得到当前routers列表的拷贝*/
 	def getRouters = {
-		List() ++ routers
+		routers ++ Nil
 	}
 }
 

@@ -21,6 +21,11 @@ class ScalaeyeProject(info: ProjectInfo) extends DefaultWebProject(info) {
 		"org.scalatest" % "scalatest" % "1.2" % "test->default",
 		"junit" % "junit" % "4.5" % "test->default",
 
+		// scalaj-reflect用来取得函数的参数名（仓库里还没有）
+		// "org.scalaj" %% "scalaj-reflect" % "0.1-SNAPSHOT" % "compile",
+		"org.scala-lang" % "scalap" % "2.8.1" withSources(),
+		"org.scala-tools.testing" %% "specs" % "1.6.6",
+
 		"postgresql" % "postgresql" % "9.0-801.jdbc4" % "compile->default",
 		// "p6spy" % "p6spy" % "1.3" % "test->default"
 
@@ -30,6 +35,8 @@ class ScalaeyeProject(info: ProjectInfo) extends DefaultWebProject(info) {
 	// to work with jrebel
 	// override def scanDirectories = Nil
 
-	// 解决编译java文件时，未使用utf8字符集导致中文乱码的问题
+	// 解决编译java文件时，未使用utf8字符集导致中文乱码的问题("-encoding", "utf8")
 	override def javaCompileOptions = super.javaCompileOptions ++ javaCompileOptions("-encoding", "utf8")
+	// override def compileOptions = super.compileOptions ++ compileOptions("-g")
+
 }

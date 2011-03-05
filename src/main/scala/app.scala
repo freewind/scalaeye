@@ -7,16 +7,13 @@ class UsersController extends Controller("/users") {
 
 	get("/") {
 		println("in users controller")
-		response.getOutputStream.write(("Hello, ScalaEye, in /users/: "+params("a")).getBytes)
-		response.getOutputStream.flush()
+		<h1>Hello, ScalaEye, in /users/: {params("a")}</h1>
 	}
 
 	/**
 	 */
 	def xxx(id: Int) {
-		response.setContentType("text/html")
-		response.getOutputStream.write(("Hello, ScalaEye, /users/xxx, id: "+id).getBytes)
-		response.getOutputStream.flush()
+		"Hello, ScalaEye, /users/xxx, id: "+id
 	}
 
 	@any("/aaa")

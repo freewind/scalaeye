@@ -1,16 +1,14 @@
 package org.scalaeye
 
-import javax.servlet._, http._
-import scala.util.DynamicVariable
 import org.scalaeye._
+import scala.xml._
+import scala.util.DynamicVariable
 import scala.collection.JavaConversions._
+import javax.servlet._, http._
 
 package object mvc {
 
 	type MultiParams = Map[String, Seq[String]]
-	trait Action { def perform() }
-	/** 所有继承了该类的类，都将在web app启动时，被调用并执行init()方法 */
-	trait Init { def init(): Any = {} }
 
 	/** 常用的隐式转换 */
 	implicit def request2rich(request: HttpServletRequest) = new RichRequest(request)
@@ -30,6 +28,36 @@ package object mvc {
 	def response = _response value
 	def multiParams = _multiParams.value.withDefaultValue(Seq.empty)
 	def params = _params
+
+}
+
+package mvc {
+
+	/** 所有继承了该类的类，都将在web app启动时，被调用并执行init()方法 */
+	trait Init { def init(): Any = {} }
+
+	trait Action {
+		protected def invoke(): Any
+		final def perform() {
+			invoke() match {
+				case text: String =>
+					response.setContentType("text/html")
+					response.getOutputStream.write(text.getBytes)
+					response.getOutputStream.flush()
+				case xml: Elem =>
+					response.setContentType("text/html")
+					response.getOutputStream.write(xml.toString.getBytes)
+					response.getOutputStream.flush()
+				case _ =>
+			}
+		}
+	}
+
+	class DirectAction(action: => Any) extends Action {
+		def invoke() = {
+			action
+		}
+	}
 
 }
 

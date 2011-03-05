@@ -7,9 +7,10 @@ import scala.collection.JavaConversions._
 
 package object mvc {
 
-	trait Action {
-		def perform()
-	}
+	type MultiParams = Map[String, Seq[String]]
+	trait Action { def perform() }
+	/** 所有继承了该类的类，都将在web app启动时，被调用并执行init()方法 */
+	trait Init { def init(): Any = {} }
 
 	/** 常用的隐式转换 */
 	implicit def request2rich(request: HttpServletRequest) = new RichRequest(request)
@@ -19,23 +20,26 @@ package object mvc {
 	/** 用于保存服务器生成的request和response等对象*/
 	val _request = new DynamicVariable[HttpServletRequest](null)
 	val _response = new DynamicVariable[HttpServletResponse](null)
-	val _params = new DynamicVariable[MultiParams](null)
+	val _multiParams = new DynamicVariable[MultiParams](Map())
+	val _params = new SingleParams {
+		def multiParams = _multiParams value
+	}
 
 	/** 快速取得当前可使用的request和response等对象 */
 	def request = _request value
 	def response = _response value
-	def params = _params value
-	def param(key: String) = params(key).head
+	def multiParams = _multiParams.value.withDefaultValue(Seq.empty)
+	def params = _params
 
 }
 
 package mvc {
 
 	class RichRequest(request: HttpServletRequest) {
-		def getParams():  MultiParams = {
+		def getParams(): MultiParams = {
 			val params = scala.collection.mutable.Map[String, Seq[String]]()
 			val names = request.getParameterNames
-			while(names.hasMoreElements) {
+			while (names.hasMoreElements) {
 				val name = names.nextElement.asInstanceOf[String]
 				params += (name -> request.getParameterValues(name).toList)
 			}

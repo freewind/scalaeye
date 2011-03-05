@@ -61,13 +61,13 @@ abstract class Controller(pathPrefix: String = "") extends Init {
 			// 由方法定义route具有优先仅，所以使用prepend放在前面
 			Router.prepend(pathPrefix + route, new Action() {
 				def perform() {
-					m.invoke(THIS, getParamsForMethod(m): _*)
+					m.invoke(THIS, getParamValuesOfMethod(m): _*)
 				}
 			}, method)
 		}
 	}
 
-	private def getParamsForMethod(m: Method): Seq[AnyRef] = {
+	private def getParamValuesOfMethod(m: Method): Seq[AnyRef] = {
 		val nameTypes = getParamNamesTypes(m)
 		println("### name types: "+nameTypes)
 		val values = getParamNamesTypes(m) map {

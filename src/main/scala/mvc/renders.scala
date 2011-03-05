@@ -4,12 +4,10 @@ import scala.xml._
 
 trait DefaultRender {
 
-	def text(text: String) { response.asText(); response.write(text) }
+	def renderText(data: AnyRef) { response.asText(); response.write(data.toString) }
 
-	def html(html: String) { response.asHtml(); response.write(html) }
+	def renderHtml(data: AnyRef) { response.asHtml(); response.write(data.toString) }
 
-	def html(xml: Elem) { response.asHtml(); response.write(xml.toString) }
-
-	def xml(xml: Elem) { response.asXml(); response.write(xml.toString) }
+	def renderXml(data: AnyRef) { response.asXml(); response.write(data.toString) }
 
 }

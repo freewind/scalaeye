@@ -73,14 +73,14 @@ abstract class Controller(pathPrefix: String = "") extends Init {
 		val values = getParamNamesTypes(m) map {
 			case (name, paramType) =>
 				paramType match {
-					case "String" => param(name)
-					case "Int" => java.lang.Integer.valueOf(param(name))
-					case "Short" => java.lang.Short.valueOf(param(name))
-					case "Long" => java.lang.Long.valueOf(param(name))
-					// case "Char" => java.lang.Character.valueOf(param(name))
-					case "Double" => java.lang.Double.valueOf(param(name))
-					case "Float" => java.lang.Float.valueOf(param(name))
-					case "Boolean" => java.lang.Boolean.valueOf(param(name))
+					case "String" => params(name)
+					case "Int" => java.lang.Integer.valueOf(params(name).getOrElse("0"))
+					case "Short" => java.lang.Short.valueOf(params(name).getOrElse("0"))
+					case "Long" => java.lang.Long.valueOf(params(name).getOrElse("0"))
+					// case "Char" => java.lang.Character.valueOf(params(name))
+					case "Double" => java.lang.Double.valueOf(params(name).getOrElse("0"))
+					case "Float" => java.lang.Float.valueOf(params(name).getOrElse("0"))
+					case "Boolean" => java.lang.Boolean.valueOf(params(name).getOrElse("0"))
 
 					// case "Byte" => getaram(name).toByte
 					// others

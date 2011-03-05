@@ -8,6 +8,8 @@ import javax.servlet._, http._
 
 package object mvc {
 
+	val defaultEncoding = "utf8"
+
 	type MultiParams = Map[String, Seq[String]]
 
 	/** 常用的隐式转换 */
@@ -37,26 +39,7 @@ package mvc {
 	trait Init { def init(): Any = {} }
 
 	trait Action {
-		protected def invoke(): Any
-		final def perform() {
-			invoke() match {
-				case text: String =>
-					response.setContentType("text/html")
-					response.getOutputStream.write(text.getBytes)
-					response.getOutputStream.flush()
-				case xml: Elem =>
-					response.setContentType("text/html")
-					response.getOutputStream.write(xml.toString.getBytes)
-					response.getOutputStream.flush()
-				case _ =>
-			}
-		}
-	}
-
-	class DirectAction(action: => Any) extends Action {
-		def invoke() = {
-			action
-		}
+		def perform(): Any
 	}
 
 }
@@ -74,7 +57,14 @@ package mvc {
 			Map[String, Seq[String]]() ++ params
 		}
 	}
-	class RichResponse(response: HttpServletResponse)
+
+	class RichResponse(response: HttpServletResponse) extends Mime {
+		def setContentType(contentType: String): this.type = { response.setContentType(contentType); this }
+		def write(text: String): this.type = { response.getOutputStream.write(text.getBytes(defaultEncoding)); this }
+		def write(bytes: Array[Byte]): this.type = { response.getOutputStream.write(bytes); this }
+		def flush(): this.type = { response.getOutputStream.flush(); this }
+	}
+
 	class RichSession(session: HttpSession)
 
 }

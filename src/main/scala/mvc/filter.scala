@@ -5,6 +5,7 @@ import javax.servlet.{ Filter, FilterConfig, FilterChain, ServletRequest, Servle
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 import org.clapper.classutil._
 import java.io._
+import scala.xml.Elem
 
 /**
  * 该类将被当作应用的启动类，定义在web.xml中。它的init方法，被在web app启动时被调用（仅一次）
@@ -61,10 +62,15 @@ class WebFilter extends Filter {
 				// 即get()/post()等函数最后一个参数体，或controller中的各public方法
 				Router.findMatch(method, uri) match {
 					case Some(data) => {
-						val allParams = request.getParams() ++ (data.params transform { (k,v) => Seq(v)})
+						val allParams = request.getParams() ++ (data.params transform { (k, v) => Seq(v) })
 						_multiParams.withValue(allParams) {
-							val action = data.router.action
-							action.perform()
+							data.router.action.perform() match {
+								case text: String =>
+									response.asText().write(text).flush()
+								case xml: Elem =>
+									response.asHtml().write(xml.toString).flush()
+								case _ =>
+							}
 						}
 					}
 					case _ => println("No router found")

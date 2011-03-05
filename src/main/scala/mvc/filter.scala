@@ -50,6 +50,9 @@ class WebFilter extends Filter {
 		val request = req.asInstanceOf[HttpServletRequest]
 		val response = res.asInstanceOf[HttpServletResponse]
 
+		// set default encoding(utf8)
+		response.setCharacterEncoding(defaultEncoding)
+
 		// debug
 		printRequest()
 

@@ -12,6 +12,10 @@ class UsersController extends Controller("/users") {
 
 	def xxx(id: Int) = "Hello, ScalaEye, /users/xxx, id: "+id
 
+	def textCn = "中文测试"
+	def htmlCn = renderHtml("中文测试")
+	def xmlCn = renderXml(<a>中文测试</a>)
+
 	def text {
 		renderText("Hello, render text")
 	}

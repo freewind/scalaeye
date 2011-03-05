@@ -27,7 +27,9 @@ import scalaj.reflect._
  * 所有在Controller子类中定义了的route，都将在web server启动时，被自动寻找并处理（因为它继承了Init类）
  *
  */
-abstract class Controller(pathPrefix: String = "") extends Init {
+abstract class Controller(pathPrefix: String = "") extends Init with DefaultRender {
+
+	class DirectAction(action: => Any) extends Action { def perform() = { action } }
 
 	/** 通过直接调用的方式增加route，它们将依次加入到route列表的最后*/
 	def any(route: String)(action: => Any) = { Router.append(pathPrefix + route, new DirectAction(action), "any") }
@@ -60,7 +62,7 @@ abstract class Controller(pathPrefix: String = "") extends Init {
 
 			// 由方法定义route具有优先仅，所以使用prepend放在前面
 			Router.prepend(pathPrefix + route, new Action() {
-				def invoke() = {
+				def perform() = {
 					m.invoke(THIS, getParamValuesOfMethod(m): _*)
 				}
 			}, method)

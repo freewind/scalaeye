@@ -7,20 +7,26 @@ class UsersController extends Controller("/users") {
 
 	get("/") {
 		println("in users controller")
-		<h1>Hello, ScalaEye, in /users/: {params("a")}</h1>
+		<h1>Hello, ScalaEye, in /users/:{ params("a") }</h1>
 	}
 
-	/**
-	 */
-	def xxx(id: Int) {
-		"Hello, ScalaEye, /users/xxx, id: "+id
+	def xxx(id: Int) = "Hello, ScalaEye, /users/xxx, id: "+id
+
+	def text {
+		renderText("Hello, render text")
+	}
+
+	def html {
+		renderHtml("Hello, render html")
+	}
+
+	def xml {
+		renderXml(<h1>Hello, render xml</h1>)
 	}
 
 	@any("/aaa")
 	def abc() {
 		println("in /users/aaa")
-		response.setContentType("text/html")
-		response.getOutputStream.write("Hello, ScalaEye".getBytes)
-		response.getOutputStream.flush()
+		renderText("Hello, ScalaEye")
 	}
 }

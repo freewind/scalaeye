@@ -4,7 +4,7 @@ import scala.xml._
 
 trait DefaultRender {
 
-	def renderText(data: AnyRef) { response.asText(); response.write(data.toString) }
+	def renderPlainText(data: AnyRef) { response.asText(); response.write(data.toString) }
 
 	def renderHtml(data: AnyRef) { response.asHtml(); response.write(data.toString) }
 

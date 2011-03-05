@@ -17,7 +17,7 @@ class UsersController extends Controller("/users") {
 	def xmlCn = renderXml(<a>中文测试</a>)
 
 	def text {
-		renderText("Hello, render text")
+		renderPlainText("Hello, render text")
 	}
 
 	def html {
@@ -31,6 +31,6 @@ class UsersController extends Controller("/users") {
 	@any("/aaa")
 	def abc() {
 		println("in /users/aaa")
-		renderText("Hello, ScalaEye")
+		renderPlainText("Hello, ScalaEye")
 	}
 }

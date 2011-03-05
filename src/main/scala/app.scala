@@ -13,24 +13,25 @@ class UsersController extends Controller("/users") {
 	def xxx(id: Int) = "Hello, ScalaEye, /users/xxx, id: "+id
 
 	def textCn = "中文测试"
-	def htmlCn = renderHtml("中文测试")
-	def xmlCn = renderXml(<a>中文测试</a>)
+	def plainTextCn = plainText("中文测试")
+	def htmlCn = html("中文测试")
+	def xmlCn = xml(<a>中文测试</a>)
 
 	def text {
-		renderPlainText("Hello, render text")
+		plainText("Hello, render text")
 	}
 
 	def html {
-		renderHtml("Hello, render html")
+		html("Hello, render html")
 	}
 
 	def xml {
-		renderXml(<h1>Hello, render xml</h1>)
+		xml(<h1>Hello, render xml</h1>)
 	}
 
 	@any("/aaa")
 	def abc() {
 		println("in /users/aaa")
-		renderPlainText("Hello, ScalaEye")
+		plainText("Hello, ScalaEye")
 	}
 }

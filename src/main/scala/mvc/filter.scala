@@ -33,7 +33,7 @@ class WebFilter extends Filter {
 		val classesDir = filterConfig.getServletContext.getRealPath("WEB-INF/classes")
 		val finder = ClassFinder(List(new File(classesDir)))
 		val classes = finder.getClasses
-		val inits = ClassFinder.concreteSubclasses("org.scalaeye.Init", classes)
+		val inits = ClassFinder.concreteSubclasses(classOf[Init].getName, classes)
 		inits.foreach { c =>
 			Class.forName(c.name).newInstance().asInstanceOf[Init].init()
 		}
@@ -62,7 +62,7 @@ class WebFilter extends Filter {
 				Router.findMatch(method, uri) match {
 					case Some(data) => {
 						val allParams = request.getParams() ++ (data.params transform { (k,v) => Seq(v)})
-						_params.withValue(allParams) {
+						_multiParams.withValue(allParams) {
 							val action = data.router.action
 							action.perform()
 						}

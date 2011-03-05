@@ -69,7 +69,7 @@ class WebFilter extends Filter {
 						_multiParams.withValue(allParams) {
 							data.router.action.perform() match {
 								case text: String =>
-									response.asText().write(text).flush()
+									response.asHtml().write(text).flush()
 								case xml: Elem =>
 									response.asHtml().write(xml.toString).flush()
 								case _ =>

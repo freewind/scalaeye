@@ -68,11 +68,9 @@ class WebFilter extends Filter {
 						val allParams = request.getParams() ++ (data.params transform { (k, v) => Seq(v) })
 						_multiParams.withValue(allParams) {
 							data.router.action.perform() match {
-								case text: String =>
-									response.asHtml().write(text).flush()
-								case xml: Elem =>
-									response.asHtml().write(xml.toString).flush()
-								case _ =>
+								case _: Unit => // 忽略
+								case value =>
+									response.asHtml().write(value.toString).flush()
 							}
 						}
 					}

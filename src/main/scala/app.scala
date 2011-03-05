@@ -17,6 +17,8 @@ class UsersController extends Controller("/users") {
 	def htmlCn = html("中文测试")
 	def xmlCn = xml(<a>中文测试</a>)
 
+	def int = 1
+
 	def text {
 		plainText("Hello, render text")
 	}

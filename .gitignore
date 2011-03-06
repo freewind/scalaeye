@@ -4,3 +4,8 @@
 /.externalToolBuilders/lib_managed
 /lib_managed
 /.externalToolBuilders
+/xxx
+/logs
+/pg-create.sql
+/pg-drop.sql
+/.settings

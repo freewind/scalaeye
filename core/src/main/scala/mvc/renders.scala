@@ -1,8 +1,9 @@
 package org.scalaeye.mvc
 
 import scala.xml._
+import org.scalaeye._, mvc._
 
-trait DefaultRender {
+trait DefaultRender extends MvcContext {
 
 	def plainText(data: AnyRef) { response.asText(); response.write(data.toString) }
 
@@ -13,14 +14,25 @@ trait DefaultRender {
 }
 
 /** 集成scalate */
-import org.fusesource.scalate._
+import org.fusesource.scalate._, servlet._
 
 package object scalate {
-	val engine = new TemplateEngine
+	object config extends Config {
+		def getServletContext = context.servletContext
+		def getName = getServletContext.getServletContextName
+		def getInitParameterNames = getServletContext.getInitParameterNames
+		def getInitParameter(name: String) = getServletContext.getInitParameter(name)
+	}
+	val engine = new ServletTemplateEngine(config)
+	engine.importStatements ::= "import org.scalaeye._, mvc._;"
+
+	def createRenderContext: ServletRenderContext = new ServletRenderContext(engine, context.request, context.response, context.servletContext)
 }
+import scalate._
 
 trait ScalateRender extends DefaultRender {
+	val PREFIX = "/WEB-INF/views/"
 	def render(path: String) {
-		html(scalate.engine.layout(path))
+		createRenderContext.render(PREFIX + path, context.copyData)
 	}
 }

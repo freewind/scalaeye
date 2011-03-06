@@ -27,7 +27,7 @@ import scalaj.reflect._
  * 所有在Controller子类中定义了的route，都将在web server启动时，被自动寻找并处理（因为它继承了Init类）
  *
  */
-abstract class Controller(pathPrefix: String = "") extends Init with ScalateRender {
+abstract class Controller(pathPrefix: String = "") extends Init with MvcContext with ScalateRender {
 
 	class DirectAction(action: => Any) extends Action { def perform() = { action } }
 

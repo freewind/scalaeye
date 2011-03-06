@@ -7,8 +7,7 @@ import scala.util.DynamicVariable
 
 package object scalaeye {
 
-	val _context = new DynamicVariable[MuMap[String, Any]](MuMap.empty)
-	def ctx = _context value
+	def context = Context.current
 
 	implicit def symbol2context(symbol: Symbol) = new SymbolContext(symbol)
 
@@ -18,7 +17,7 @@ package scalaeye {
 
 	class SymbolContext(symbol: Symbol) {
 		def :=(value: Any) {
-			ctx += (symbol.name -> value)
+			// context += (symbol.name -> value)
 		}
 	}
 }

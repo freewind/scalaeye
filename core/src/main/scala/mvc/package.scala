@@ -16,20 +16,37 @@ package object mvc {
 	implicit def request2rich(request: HttpServletRequest) = new RichRequest(request)
 	implicit def response2rich(response: HttpServletResponse) = new RichResponse(response)
 	implicit def session2rich(session: HttpSession) = new RichSession(session)
+	implicit def context2mvc(context: Context) = new MvcContextWraper(context)
+}
 
-	/** 用于保存服务器生成的request和response等对象*/
-	val _request = new DynamicVariable[HttpServletRequest](null)
-	val _response = new DynamicVariable[HttpServletResponse](null)
-	val _multiParams = new DynamicVariable[MultiParams](Map())
-	val _params = new SingleParams {
-		def multiParams = _multiParams value
+package mvc {
+
+	class MvcContextWraper(context: Context) { mvc =>
+		private val REQUEST = "scalaeye.mvc.request"
+		def request = context.getAs[HttpServletRequest](REQUEST)
+		def request_=(request: HttpServletRequest) = context(REQUEST) = request
+
+		private val RESPONSE = "scalaeye.mvc.response"
+		def response = context.getAs[HttpServletResponse](RESPONSE)
+		def response_=(response: HttpServletResponse) = context(RESPONSE) = response
+
+		private val MULTI_PARAMS = "scalaeye.mvc.multiParams"
+		def multiParams = context.getAs[MultiParams](MULTI_PARAMS, Map.empty).withDefaultValue(Seq.empty)
+		def multiParams_=(multiParams: MultiParams) = context(MULTI_PARAMS) = multiParams
+		def params = new SingleParams { def multiParams = mvc.multiParams }
+
+		private val FILTER_CONFIG = "scalaeye.mvc.filterConfig"
+		def filterConfig = context.getAs[FilterConfig](FILTER_CONFIG)
+		def filterConfig_=(filterConfig: FilterConfig) = context(FILTER_CONFIG) = filterConfig
+		def servletContext = filterConfig.getServletContext
 	}
 
-	/** 快速取得当前可使用的request和response等对象 */
-	def request = _request value
-	def response = _response value
-	def multiParams = _multiParams.value.withDefaultValue(Seq.empty)
-	def params = _params
+	trait MvcContext {
+		protected def request = context.request
+		protected def response = context.response
+		protected def multiParams = context.multiParams
+		protected def params = context.params
+	}
 
 }
 

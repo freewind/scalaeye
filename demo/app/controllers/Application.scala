@@ -5,7 +5,12 @@ import models._
 
 class Application extends Controller {
 
-	any("/") { <a href="/index">使用scalate版首页</a> }
+	any("/") { 
+		<ul>
+			<li><a href="/index">使用scalate版首页</a></li>
+			<li><a href="/jsp/">jsp view support</a></li>
+		</ul>
+	}
 
 	any("/index") {
 		render("index.jade")

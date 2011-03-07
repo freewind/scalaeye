@@ -1,4 +1,10 @@
 <web-app version="2.5">
+
+	<!-- 该初始化类一定要放在最前面 -->
+	<listener>
+		<listener-class>org.scalaeye.Initializer</listener-class>
+	</listener>
+
 	<filter>
 		<filter-name>ScalaEye Filter</filter-name>
 		<filter-class>org.scalaeye.mvc.WebFilter</filter-class>

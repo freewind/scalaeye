@@ -1,0 +1,14 @@
+-@ var body: String
+-@ var title: String = "ScalaEye欢迎您"
+
+!!!
+html
+	head
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		title #{title}
+	body
+		.header
+			.logo ScalaEye问与答
+		hr/
+		.main
+			!= body

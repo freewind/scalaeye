@@ -1,3 +1,8 @@
-p Hello, scalaeye with scalate!
+- attributes("layout") = "/WEB-INF/views/layout.jade"
+-@ val questions: JList[Question]
 
-x
+| 当前共有#{questions.size}个问题
+a(href="/questions/create") 我要提问
+- for(q <- questions)
+	.title= q.title
+	.content= q.content

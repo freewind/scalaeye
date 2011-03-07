@@ -1,0 +1,10 @@
+- attributes("layout") = "/WEB-INF/views/layout.jade"
+
+form(action="/questions/create" method="post")
+	label 标题
+	input(type="text" name="title")/
+	br/
+	label 内容
+	textarea(name="content" rows=8 cols=60)
+	br/
+	input(type="submit" value="提交")/

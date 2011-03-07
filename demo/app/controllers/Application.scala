@@ -1,6 +1,6 @@
 package controllers
 
-import org.scalaeye.mvc._
+import org.scalaeye._, mvc._
 import models._
 
 class Application extends Controller {
@@ -8,6 +8,7 @@ class Application extends Controller {
 	any("/") { <a href="/index">使用scalate版首页</a> }
 
 	any("/index") {
+		'questions := Question.find().findList()
 		render("index.jade")
 	}
 

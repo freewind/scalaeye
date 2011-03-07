@@ -29,6 +29,9 @@ import scalaj.reflect._
  */
 abstract class Controller(pathPrefix: String = "") extends Init with MvcContext with ScalateRender {
 
+	private def getControllerDir = if (pathPrefix.isBlank) "" else this.getClass.getSimpleName.toLowerCase+"/"
+	override def viewBaseDir = super.viewBaseDir + getControllerDir+"/"
+
 	class DirectAction(action: => Any) extends Action { def perform() = { action } }
 
 	/** 通过直接调用的方式增加route，它们将依次加入到route列表的最后*/
@@ -51,11 +54,11 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 			// 如果有注解，先从注解中取得所需信息
 			m.getAnnotations map { anno =>
 				anno match {
-					case a: any if a.value().length > 0 => route = a.value(); method = "any"
-					case a: get if a.value().length > 0 => route = a.value(); method = "get"
-					case a: post if a.value().length > 0 => route = a.value(); method = "post"
-					case a: put if a.value().length > 0 => route = a.value(); method = "put"
-					case a: delete if a.value().length > 0 => route = a.value(); method = "delete"
+					case a: any => method = "any"; a.value().whenNotBlank(v => route = v.trim)
+					case a: get => method = "get"; a.value().whenNotBlank(v => route = v.trim)
+					case a: post => method = "post"; a.value().whenNotBlank(v => route = v.trim)
+					case a: put => method = "put"; a.value().whenNotBlank(v => route = v.trim)
+					case a: delete => method = "delete"; a.value().whenNotBlank(v => route = v.trim)
 					case _ =>
 				}
 			}

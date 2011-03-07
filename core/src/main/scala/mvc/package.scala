@@ -52,9 +52,6 @@ package mvc {
 
 package mvc {
 
-	/** 所有继承了该类的类，都将在web app启动时，被调用并执行init()方法 */
-	trait Init { def init(): Any = {} }
-
 	trait Action {
 		def perform(): Any
 	}

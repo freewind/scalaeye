@@ -24,7 +24,7 @@ package object scalate {
 		def getInitParameter(name: String) = getServletContext.getInitParameter(name)
 	}
 	val engine = new ServletTemplateEngine(config)
-	engine.importStatements ::= "import org.scalaeye._, mvc._;"
+	engine.importStatements ::= "import org.scalaeye._, mvc._;import controllers._; import models._;"
 
 	def createRenderContext: ServletRenderContext = new ServletRenderContext(engine, context.request, context.response, context.servletContext)
 }
@@ -32,7 +32,11 @@ import scalate._
 
 trait ScalateRender extends DefaultRender {
 	val PREFIX = "/WEB-INF/views/"
-	def render(path: String) {
-		createRenderContext.render(PREFIX + path, context.copyData)
+	def render(path: String, layout: Boolean = true) {
+		val renderContext = createRenderContext
+		for ((key, value) <- context.copyData) {
+			renderContext.attributes(key) = value
+		}
+		renderContext.include(PREFIX + path, layout)
 	}
 }

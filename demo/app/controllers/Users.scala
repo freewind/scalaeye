@@ -1,4 +1,4 @@
-package org.scalaeye
+package controllers
 
 import org.scalaeye._, mvc._
 import models._

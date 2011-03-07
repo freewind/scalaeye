@@ -78,7 +78,7 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 		val values = getParamNamesTypes(m) map {
 			case (name, paramType) =>
 				paramType match {
-					case "String" => params(name)
+					case "String" => params(name).getOrElse("")
 					case "Int" => java.lang.Integer.valueOf(params(name).getOrElse("0"))
 					case "Short" => java.lang.Short.valueOf(params(name).getOrElse("0"))
 					case "Long" => java.lang.Long.valueOf(params(name).getOrElse("0"))

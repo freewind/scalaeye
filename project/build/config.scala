@@ -47,6 +47,8 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 		override def javaCompileOptions = super.javaCompileOptions ++ javaCompileOptions("-encoding", "utf8")
 
 		override val jettyPort = 8080
+
+		// override val scanDirectories = Nil
 	}
 
 	trait ScalaEyeStandardProject extends DefaultWebProject {

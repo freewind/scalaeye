@@ -35,11 +35,11 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 	class DirectAction(action: => Any) extends Action { def perform() = { action } }
 
 	/** 通过直接调用的方式增加route，它们将依次加入到route列表的最后*/
-	def any(route: String)(action: => Any) = { Router.append(pathPrefix + route, new DirectAction(action), "any") }
-	def get(route: String)(action: => Any) = { Router.append(pathPrefix + route, new DirectAction(action), "get") }
-	def post(route: String)(action: => Any) = { Router.append(pathPrefix + route, new DirectAction(action), "post") }
-	def put(route: String)(action: => Any) = { Router.append(pathPrefix + route, new DirectAction(action), "put") }
-	def delete(route: String)(action: => Any) = { Router.append(pathPrefix + route, new DirectAction(action), "delete") }
+	def any(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "any") }
+	def get(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "get") }
+	def post(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "post") }
+	def put(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "put") }
+	def delete(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "delete") }
 
 	val THIS = this
 
@@ -63,8 +63,8 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 				}
 			}
 
-			// 由方法定义route具有优先仅，所以使用prepend放在前面
-			Router.prepend(pathPrefix + route, new Action() {
+			// 由方法定义route具有优先权，所以使用prepend放在前面
+			Routers.prepend(pathPrefix + route, new Action() {
 				def perform() = {
 					m.invoke(THIS, getParamValuesOfMethod(m): _*)
 				}
@@ -74,7 +74,6 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 
 	private def getParamValuesOfMethod(m: Method): Seq[AnyRef] = {
 		val nameTypes = getParamNamesTypes(m)
-		println("### name types: "+nameTypes)
 		val values = getParamNamesTypes(m) map {
 			case (name, paramType) =>
 				paramType match {

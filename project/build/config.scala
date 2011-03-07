@@ -48,7 +48,8 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 
 		override val jettyPort = 8080
 
-		// override val scanDirectories = Nil
+		// 配合jrebel，让jetty不再自动重载
+		override val scanDirectories = Nil
 	}
 
 	trait ScalaEyeStandardProject extends DefaultWebProject {

@@ -126,23 +126,25 @@ class Router(val pattern: String, val action: Action, val method: String = "any"
 /**
  * 可使用Rouetr("/users/{id}")的方式生成Router
  */
-object Router {
+object Routers {
 
 	/** 用于保存route规则*/
 	val routers = ListBuffer[Router]()
 
-	/** 使用Router()来创建新Router */
-	def apply(pattern: String, action: Action, method: String = "any") = new Router(pattern, action, method)
+	/** 清空已有规则 */
+	def clear() {
+		routers.clear()
+	}
 
 	/** 插入到列表前（优先级高）*/
 	def prepend(pattern: String, action: Action, method: String) {
-		val router = Router(pattern, action, method)
+		val router = new Router(pattern, action, method)
 		router +=: routers
 	}
 
 	/** 插入到列表后（优先级低）*/
 	def append(pattern: String, action: Action, method: String) {
-		val router = Router(pattern, action, method)
+		val router = new Router(pattern, action, method)
 		routers += router
 	}
 
@@ -161,6 +163,21 @@ object Router {
 	def getRouters = {
 		routers ++ Nil
 	}
+
+	def reload() {
+		clear()
+		findSubclassesOf[Controller] map { clsname =>
+			getObjectOrCreateInstanceOf[Controller](clsname).asInstanceOf[Init].init()
+		}
+		print()
+	}
+
+	def print() {
+		getRouters foreach { r =>
+			println("### router: "+r.toString)
+		}
+	}
+
 }
 
 /** 用于保存match结果 */

@@ -52,6 +52,13 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 		override val scanDirectories = Nil
 	}
 
+	lazy val jsp = project("jsp", "jsp", new JspProject(_), core)
+	class JspProject(info: ProjectInfo) extends DefaultProject(info) {
+		override def libraryDependencies = Set(
+			"org.mortbay.jetty" % "jsp-2.1-glassfish" % "2.1.v20091210" % "provided",
+			"javax.servlet" % "jstl" % "1.2") ++ super.libraryDependencies
+	}
+
 	trait ScalaEyeStandardProject extends DefaultWebProject {
 		override def mainScalaSourcePath = "app"
 		override def mainResourcesPath = "conf"
@@ -73,3 +80,4 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 	}
 
 }
+

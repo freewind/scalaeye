@@ -25,6 +25,7 @@ span{
 <body>
     <h1>JSP View</h1>
     <div>
+	链接:
     <%
     	String urls []={
     		"/jsp/users/",
@@ -43,6 +44,7 @@ span{
     </ul>
 </div>
 <div>
+代码:
     <pre>
     <code>
 import org.scalaeye.mvc._

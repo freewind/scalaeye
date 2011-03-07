@@ -27,7 +27,7 @@ class JSPTestController extends Controller("/jsp") with JSPSupport {
   get("/hello/index1") {
     renderJSP("/jsp/hello/index",
       "user" -> "tomas",
-      "msg" -> "hello")
+      "msg" -> "你好，世界！")
   }
 
   get("/hello/index2") {

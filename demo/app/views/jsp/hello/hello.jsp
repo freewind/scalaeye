@@ -6,5 +6,5 @@ span{
 	width: 50px;
 	color:red;
 }
-</style>
-hello.jsp, <span>${msg }&nbsp;</span>
+</style> 
+hello.jsp, 你好 <span>${msg }&nbsp;</span>

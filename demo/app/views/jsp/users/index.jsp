@@ -3,8 +3,11 @@
 <html>
 <body>
 <p>
-JSP: /WEB-INF/users/index.jsp
+JSP: /WEB-INF/users/index.jsp 
 </p> 
+<p>
+中文
+</p>
 </body>
 </html>
 

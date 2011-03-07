@@ -23,7 +23,7 @@ span{
 </style>
 </head>
 <body>
-    <h1>test jsp </h1>
+    <h1>test jsp 测试</h1>
     <h2>welcome: <span>${user }&nbsp;</span></h2>
     <h2>message from server: <span>${msg}&nbsp;</span></h2>
     <div>

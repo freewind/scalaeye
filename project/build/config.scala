@@ -41,7 +41,14 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 		val junit = "junit" % "junit" % "4.5" % "test->default"
 	}
 
-	lazy val demo = project("demo", "demo", new DemoProject(_), core)
+	lazy val jsp = project("jsp", "jsp", new JspProject(_), core)
+	class JspProject(info: ProjectInfo) extends DefaultProject(info) {
+		override def libraryDependencies = Set(
+			"org.mortbay.jetty" % "jsp-2.1-glassfish" % "2.1.v20091210" % "provided",
+			"javax.servlet" % "jstl" % "1.2") ++ super.libraryDependencies
+	}
+
+	lazy val demo = project("demo", "demo", new DemoProject(_), core, jsp)
 	class DemoProject(info: ProjectInfo) extends DefaultWebProject(info) with ScalaEyeStandardProject {
 		// 解决编译java文件时，未使用utf8字符集导致中文乱码的问题
 		override def javaCompileOptions = super.javaCompileOptions ++ javaCompileOptions("-encoding", "utf8")
@@ -50,13 +57,6 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 
 		// 配合jrebel，让jetty不再自动重载
 		override val scanDirectories = Nil
-	}
-
-	lazy val jsp = project("jsp", "jsp", new JspProject(_), core)
-	class JspProject(info: ProjectInfo) extends DefaultProject(info) {
-		override def libraryDependencies = Set(
-			"org.mortbay.jetty" % "jsp-2.1-glassfish" % "2.1.v20091210" % "provided",
-			"javax.servlet" % "jstl" % "1.2") ++ super.libraryDependencies
 	}
 
 	trait ScalaEyeStandardProject extends DefaultWebProject {

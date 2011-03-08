@@ -3,6 +3,7 @@ package org.scalaeye.mvc
 import scala.xml._
 import org.scalaeye._, mvc._
 
+/** 默认的render，直接操作servlet的response，输出内容*/
 trait DefaultRender extends MvcContext {
 
 	def plainText(data: AnyRef) { response.asText(); response.write(data.toString) }
@@ -31,7 +32,7 @@ package object scalate {
 import scalate._
 
 trait ScalateRender extends DefaultRender {
-	def viewBaseDir = "/WEB-INF/views/"
+	def viewBaseDir = Context.webinfDir+"/views"
 	def render(path: String, layout: Boolean = true) {
 		val renderContext = createRenderContext
 		for ((key, value) <- context.copyData) {

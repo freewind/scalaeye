@@ -27,11 +27,17 @@ import scalaj.reflect._
  * 所有在Controller子类中定义了的route，都将在web server启动时，被自动寻找并处理（因为它继承了Init类）
  *
  */
-abstract class Controller(pathPrefix: String = "") extends Init with MvcContext with ScalateRender {
+abstract class Controller(pathPrefix: String = "") extends Init with MvcContext with ScalateRender { controller =>
 
+	/**
+	 * 如果用户的Controller是继承Controller()或Controller("")，将其在 render("abc.jade")时，将在WEB-INF/views目录下去找。
+	 * 如果继承的Controller的pathPrefix不为空，如class Users extends Controller("/aaaa")，将在render("abc.jade")时，
+	 * 将在WEB-INF/views/users/下去寻找。
+	 */
 	private def getControllerDir = if (pathPrefix.isBlank) "" else this.getClass.getSimpleName.toLowerCase+"/"
 	override def viewBaseDir = super.viewBaseDir + getControllerDir+"/"
 
+	/** 使用any/get/post/put/delete等直接定义router时，使用的Action类*/
 	class DirectAction(action: => Any) extends Action { def perform() = { action } }
 
 	/** 通过直接调用的方式增加route，它们将依次加入到route列表的最后*/
@@ -40,8 +46,6 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 	def post(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "post") }
 	def put(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "put") }
 	def delete(route: String)(action: => Any) = { Routers.append(pathPrefix + route, new DirectAction(action), "delete") }
-
-	val THIS = this
 
 	/** 该方法将在web server启动时被调用。用于查找所有的public函数及其注解，增加对应的route规则 */
 	override def init() {
@@ -66,14 +70,14 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 			// 由方法定义route具有优先权，所以使用prepend放在前面
 			Routers.prepend(pathPrefix + route, new Action() {
 				def perform() = {
-					m.invoke(THIS, getParamValuesOfMethod(m): _*)
+					m.invoke(controller, prepareParamValuesForMethod(m): _*)
 				}
 			}, method)
 		}
 	}
 
-	private def getParamValuesOfMethod(m: Method): Seq[AnyRef] = {
-		val nameTypes = getParamNamesTypes(m)
+	/** 为一个action方法准备参数，从提交的数据中取得 */
+	private def prepareParamValuesForMethod(m: Method): Seq[AnyRef] = {
 		val values = getParamNamesTypes(m) map {
 			case (name, paramType) =>
 				paramType match {
@@ -85,7 +89,6 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 					case "Double" => java.lang.Double.valueOf(params(name).getOrElse("0"))
 					case "Float" => java.lang.Float.valueOf(params(name).getOrElse("0"))
 					case "Boolean" => java.lang.Boolean.valueOf(params(name).getOrElse("0"))
-
 					// case "Byte" => getaram(name).toByte
 					// others
 					case _ => null
@@ -94,6 +97,11 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 		values
 	}
 
+	/**
+	 * 得到一个函数的各参数名。返回值形如Seq((name, String), (age, Int))
+	 *
+	 * 感谢[scalaj-reflect](https://github.com/scalaj/scalaj-reflect)
+	 */
 	private def getParamNamesTypes(method: Method): Seq[Tuple2[String, String]] = {
 		for {
 			clazz <- Mirror.ofClass(method.getDeclaringClass).toSeq

@@ -41,9 +41,8 @@ import scala.collection.mutable.ListBuffer
 //
 // 用法举例：
 // <code>
-// val router = new Router("/users/{id}")
-// val (fit, params) = router.parse("/users/123")
-// println(fit)//  -> true
+// val router = new Router("/users/{id}", ()=>Any, "any")
+// val params = router.parse("/users/123")
 // pritnln(params)//  -> Map("id"->"123")
 // </code>
 //
@@ -124,7 +123,7 @@ class Router(val pattern: String, val action: Action, val method: String = "any"
 }
 
 /**
- * 可使用Rouetr("/users/{id}")的方式生成Router
+ * 用于操作routers，如增减，重新导入等
  */
 object Routers {
 
@@ -164,17 +163,19 @@ object Routers {
 		routers ++ Nil
 	}
 
+	/** 重新导入所有的routers，通常用于dev模式 */
 	def reload() {
 		clear()
 		findSubclassesOf[Controller] map { clsname =>
-			getObjectOrCreateInstanceOf[Controller](clsname).asInstanceOf[Init].init()
+			getObjectOrCreateInstanceOf[Controller](clsname).init()
 		}
 		print()
 	}
 
+	/** 打印出当前的routers信息*/
 	def print() {
 		getRouters foreach { r =>
-			println("### router: "+r.toString)
+			logger.info("router: "+r.toString)
 		}
 	}
 

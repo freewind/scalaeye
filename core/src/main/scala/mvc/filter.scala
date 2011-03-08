@@ -27,18 +27,23 @@ import scala.xml.Elem
 
 class WebFilter extends Filter {
 
+	/** 当该filter被载入时，该函数将被调用 */
 	def init(filterConfig: FilterConfig) {
+		// 当filterConfig设到全局Context中
 		Context.filterConfig = filterConfig
 	}
 
 	/** 每一个请求到来时，该方法都将被调用。*/
 	def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain) {
+		// 如果处于dev模式，重新载入routers（配合jrebel时使用时才需要这样做）
 		if (AppConfig.inDev) {
 			Routers.reload()
 		}
 
 		val request = req.asInstanceOf[HttpServletRequest]
 		val response = res.asInstanceOf[HttpServletResponse]
+
+		// 在新Context环境中执行
 		Context.execInNew {
 
 			context.request = request
@@ -46,9 +51,6 @@ class WebFilter extends Filter {
 
 			// set default encoding(utf8)
 			response.setCharacterEncoding(defaultEncoding)
-
-			// debug
-			printRequest()
 
 			val method = request.getMethod()
 			val uri = request.getRequestURI()
@@ -70,6 +72,7 @@ class WebFilter extends Filter {
 		}
 	}
 
+	/** 当filter被关闭时，该函数被调用。暂时为空。*/
 	def destroy() {}
 
 	/** 用于debug */

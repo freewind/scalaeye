@@ -28,7 +28,7 @@ class Context {
 	}
 
 	/** 得到自己和全局Context的数据的copy，返回值为不可变的Map */
-	def copyData: Map[String, Any] = Map() ++ data ++ Context.copyData
+	def copyData: Map[String, Any] = Map() ++ data ++ Context.data
 }
 
 /** 全局Context，可用于保存一些全局使用的，不会失效的数据。 */

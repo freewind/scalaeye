@@ -3,7 +3,6 @@ package org.scalaeye
 import org.scalaeye._
 import scala.xml._
 import scala.util.DynamicVariable
-import scala.collection.mutable.{ Map => MuMap }
 import scala.collection.JavaConversions._
 import javax.servlet._, http._
 
@@ -20,6 +19,21 @@ package object mvc {
 
 	/** 定义找到了router时，应该执行的操作 */
 	trait Action { def perform(): Any }
+
+// TODO 以后可能会提取出以下type
+//	type Attributes {
+//		def getAttribute(name:String) : AnyRef
+//		def getAttributeNames(): java.util.Enumeration
+//		def setAttribute(name: String, value: AnyRef)
+//		def removeAttribute(name:String)
+//	}
+//
+//	type Parameters {
+//		def getParameter(name:String):String
+//		def getParameterMap():java.util.Map[_,_]
+//		def getParameterNames(): java.util.Enumeration
+//		def getParameterValues(name:String): Array[String]
+//	}
 
 	/** 常用的隐式转换 */
 	implicit def request2rich(request: HttpServletRequest) = new RichRequest(request)
@@ -57,9 +71,8 @@ package mvc {
 		def filterConfig_=(filterConfig: FilterConfig) = context(FILTER_CONFIG) = filterConfig
 		def servletContext = filterConfig.getServletContext
 
-		private val FLASH = "scalaeye.mvc.flash"
 		def flash: FlashMap = {
-			session(FLASH) match {
+			session(FlashMap.SESSION_KEY) match {
 				case f: FlashMap => f
 				case _ => new FlashMap
 			}
@@ -75,73 +88,6 @@ package mvc {
 		def multiParams = context.multiParams
 		def params = context.params
 		def flash = context.flash
-	}
-
-}
-
-/** request, response等的包装类 */
-package mvc {
-
-	class RichRequest(raw: HttpServletRequest) {
-
-		/** 将request中的各参数变为一个MultiParams*/
-		def getParams(): MultiParams = {
-			val params = scala.collection.mutable.Map[String, Seq[String]]()
-			val names = raw.getParameterNames
-			while (names.hasMoreElements) {
-				val name = names.nextElement.asInstanceOf[String]
-				params += (name -> raw.getParameterValues(name).toList)
-			}
-			Map[String, Seq[String]]() ++ params
-		}
-	}
-
-	class RichResponse(raw: HttpServletResponse) extends Mime {
-		def setContentType(contentType: String): this.type = { raw.setContentType(contentType); this }
-		def write(text: String): this.type = { raw.getOutputStream.write(text.getBytes(defaultEncoding)); this }
-		def write(bytes: Array[Byte]): this.type = { raw.getOutputStream.write(bytes); this }
-		def flush(): this.type = { raw.getOutputStream.flush(); this }
-		def redirect(uri: String) = raw.sendRedirect(uri)
-	}
-
-	class RichSession(raw: HttpSession) {
-		def apply(key: String) = raw.getAttribute(key)
-		def update(key: String, value: String) = raw.setAttribute(key, value)
-	}
-
-	class FlashMap {
-		var current = MuMap[String, Any]()
-		var next = MuMap[String, Any]()
-		def apply(key: String): Any = {
-			val value = next.get(key) match {
-				case Some(v) => v
-				case _ => current.getOrElse(key, "")
-			}
-			println("########## get flash: "+key+"="+value)
-			value
-		}
-
-		def update(key: String, value: Any) = {
-			next(key) = value
-			println("########## set flash: "+key+"="+value)
-		}
-
-		def reset = {
-			current = next;
-			next = MuMap[String, Any]()
-			context.session.setAttribute("scalaeye.mvc.flash", this)
-		}
-
-		def contains(key: String) = apply(key) != None
-
-		def message = apply("scalaeye.message")
-		def message(text: String) = update("scalaeye.message", text)
-		def error = apply("scalaeye.error")
-		def error(text: String) = update("scalaeye.error", text)
-		def warn = apply("scalaeye.warn")
-		def warn(text: String) = update("scalaeye.warn", text)
-		def debug = apply("scalaeye.debug")
-		def debug(text: String) = update("scalaeye.debug", text)
 	}
 
 }

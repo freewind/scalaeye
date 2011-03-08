@@ -32,7 +32,7 @@ package object scalate {
 import scalate._
 
 trait ScalateRender extends DefaultRender {
-	def viewBaseDir = Context.webinfDir+"/views"
+	def viewBaseDir = Context.webinfDir / "views"
 	def render(path: String, layout: Boolean = true) {
 		val renderContext = createRenderContext
 		for ((key, value) <- context.copyData) {

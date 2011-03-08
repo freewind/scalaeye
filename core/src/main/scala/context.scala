@@ -2,6 +2,7 @@ package org.scalaeye
 
 import scala.collection.mutable.{ Map => MuMap }
 import scala.util.DynamicVariable
+import javax.servlet.{ FilterConfig, ServletContextEvent }
 
 /**
  * 重要的类。本质上是一个Map，用于读取属性数据。对于每一个新的http请求，都将会生成一个新的Context供使用。
@@ -44,6 +45,10 @@ object Context extends Context {
 	def execInNew(block: => Any) = {
 		_context.withValue(new Context()) { block }
 	}
+
+	// 一些全局属性
+	var servletContextEvent: ServletContextEvent = _
+	var filterConfig: FilterConfig = _
 
 	/** 用于保存webapp的路径，方便程序中调用 。其值将在web server启动时被注入。*/
 	private val WEBAPP_ROOT = "scalaeye.webapp_root"

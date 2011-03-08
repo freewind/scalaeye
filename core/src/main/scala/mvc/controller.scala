@@ -1,6 +1,6 @@
 package org.scalaeye.mvc
 
-import org.scalaeye._, mvc._
+import org.scalaeye._, mvc._, scalate._
 import java.lang.reflect._
 import scalaj.reflect._
 

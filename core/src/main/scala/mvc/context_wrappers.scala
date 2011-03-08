@@ -40,6 +40,7 @@ class RichCookie(raw: Cookie) {}
  * 提供了读取设置request, response, multiParams, params的方法
  */
 class MvcContextWraper(context: Context) { mvc =>
+
 	private val REQUEST = "scalaeye.mvc.request"
 	def request = context.getAs[HttpServletRequest](REQUEST)
 	def request_=(request: HttpServletRequest) = context(REQUEST) = request
@@ -53,11 +54,6 @@ class MvcContextWraper(context: Context) { mvc =>
 	def multiParams_=(multiParams: MultiParams) = context(MULTI_PARAMS) = multiParams
 	def params = new SingleParams { def multiParams = mvc.multiParams }
 
-	private val FILTER_CONFIG = "scalaeye.mvc.filterConfig"
-	def filterConfig = context.getAs[FilterConfig](FILTER_CONFIG)
-	def filterConfig_=(filterConfig: FilterConfig) = context(FILTER_CONFIG) = filterConfig
-	def servletContext = filterConfig.getServletContext
-
 	def flash: FlashMap = {
 		session(FlashMap.SESSION_KEY) match {
 			case f: FlashMap => f
@@ -67,6 +63,7 @@ class MvcContextWraper(context: Context) { mvc =>
 
 	def session = request.getSession()
 	def cookies = request.getCookies().toList
+	def servletContext = Context.servletContextEvent.getServletContext
 
 }
 

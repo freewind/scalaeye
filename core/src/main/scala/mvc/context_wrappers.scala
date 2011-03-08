@@ -1,6 +1,7 @@
 package org.scalaeye.mvc
 
 import javax.servlet._, http._
+import org.scalaeye._
 
 /** request的包装类 */
 class RichRequest(raw: HttpServletRequest) {

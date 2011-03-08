@@ -38,7 +38,7 @@ import org.scalaeye._
  * }}}
  *
  */
-object AppConfig extends Init {
+object AppConfig extends Init with ReloadableOnRequest {
 
 	// 默认使用的配置文件名，使用系统属性mode或dev
 	private var _mode: String = System.getProperty("mode") || "dev"
@@ -57,7 +57,9 @@ object AppConfig extends Init {
 	def mode = _mode
 
 	/** 当web应用被载入时，该函数将被调用 */
-	override def init() {
+	def init() = reload()
+
+	def reload() {
 		this.load()
 	}
 

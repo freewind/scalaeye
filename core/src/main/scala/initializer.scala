@@ -23,10 +23,7 @@ class Initializer extends ServletContextListener {
 		Context.servletContextEvent = event
 		Context.webappRoot = event.getServletContext.getRealPath("/")
 
-		// 得到所有继承了Init的类，执行其init()函数
-		findSubclassesOf[Init] foreach { clsname =>
-			getObjectOrCreateInstanceOf[Init](clsname).init()
-		}
+		initOnStartup()
 	}
 
 	/** 当前web应用被关闭时，该函数将被调用，目前为空 */
@@ -35,4 +32,6 @@ class Initializer extends ServletContextListener {
 }
 
 /** 所有继承了该类的类，都将在当前web应用被载入时，被调用并执行init()方法 */
-trait Init { def init(): Any = {} }
+trait Init { def init(): Any }
+
+trait ReloadableOnRequest { def reload(): Any }

@@ -125,7 +125,7 @@ class Router(val pattern: String, val action: Action, val method: String = "any"
 /**
  * 用于操作routers，如增减，重新导入等
  */
-object Routers {
+object Routers extends Init with ReloadableOnRequest {
 
 	/** 用于保存route规则*/
 	val routers = ListBuffer[Router]()
@@ -162,6 +162,9 @@ object Routers {
 	def getRouters = {
 		routers ++ Nil
 	}
+
+	/** 初始化时将调用 */
+	def init = reload
 
 	/** 重新导入所有的routers，通常用于dev模式 */
 	def reload() {

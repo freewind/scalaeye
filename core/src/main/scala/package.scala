@@ -21,6 +21,20 @@ package object scalaeye extends ClassUtils with ClassAliases {
 	implicit def string2rich(str: String) = new RichString(str)
 	implicit def string2path(str: String) = new PathHelper(str)
 
+	/** 当web应用被载入时执行 */
+	def initOnStartup() = {
+		findSubclassesOf[Init] foreach { clsname =>
+			getObjectOrCreateInstanceOf[Init](clsname).init()
+		}
+	}
+
+	/** 在dev模式下，当每个新的请求到来时执行 */
+	def reloadOnRequest() = {
+		findSubclassesOf[ReloadableOnRequest] foreach { clsname =>
+			getObjectOrCreateInstanceOf[ReloadableOnRequest](clsname).reload()
+		}
+	}
+
 }
 
 /** 定义一些将被隐式转换的类 */

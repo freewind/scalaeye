@@ -26,9 +26,11 @@ package object scalate {
 
 import scalate._
 
-class ScalateInitializer extends Init {
+object ScalateInitializer extends Init with ReloadableOnRequest {
 
-	override def init() {
+	def init() = reload
+
+	def reload() {
 		engine.importStatements = DEFAULT_IMPORTS
 		findSubclassesOf[ScalateTagSupport] foreach { clsname =>
 			engine.importStatements :+= "import "+clsname.stripSuffix("$")+"._"

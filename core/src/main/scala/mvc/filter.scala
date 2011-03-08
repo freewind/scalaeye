@@ -37,7 +37,7 @@ class WebFilter extends Filter {
 	def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain) {
 		// 如果处于dev模式，重新载入routers（配合jrebel时使用时才需要这样做）
 		if (AppConfig.inDev) {
-			Routers.reload()
+			reloadOnRequest()
 		}
 
 		val request = req.asInstanceOf[HttpServletRequest]

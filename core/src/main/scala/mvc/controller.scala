@@ -27,7 +27,7 @@ import scalaj.reflect._
  * 所有在Controller子类中定义了的route，都将在web server启动时，被自动寻找并处理（因为它继承了Init类）
  *
  */
-abstract class Controller(pathPrefix: String = "") extends Init with MvcContext with ScalateRender { controller =>
+abstract class Controller(pathPrefix: String = "") extends MvcContext with ScalateRender { controller =>
 
 	/**
 	 * 如果用户的Controller是继承Controller()或Controller("")，将其在 render("abc.jade")时，将在WEB-INF/views目录下去找。
@@ -50,7 +50,7 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 	def redirect(uri: String) = response.redirect(uri)
 
 	/** 该方法将在web server启动时被调用。用于查找所有的public函数及其注解，增加对应的route规则 */
-	override def init() {
+	def init() {
 		val methods = this.getClass.getDeclaredMethods().filter(m => m.getModifiers == Modifier.PUBLIC)
 		methods.foreach { m =>
 			// 默认是any，函数名作route

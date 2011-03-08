@@ -15,7 +15,7 @@ class Context {
 	def apply(key: String): Option[Any] = {
 		data.get(key) match {
 			case Some(v) => Some(v)
-			case _ => Context.apply(key)
+			case _ => Context.data.get(key)
 		}
 	}
 
@@ -46,7 +46,7 @@ object Context extends Context {
 	}
 
 	/** 用于保存webapp的路径，方便程序中调用 。其值将在web server启动时被注入。*/
-	private val WEBAPP_ROOT = "org.scalaeye.webapp_root"
+	private val WEBAPP_ROOT = "scalaeye.webapp_root"
 	def webappRoot: String = getAs[String](WEBAPP_ROOT)
 	def webappRoot_=(path: String) = update(WEBAPP_ROOT, path)
 	def webinfDir: String = webappRoot / "WEB-INF"

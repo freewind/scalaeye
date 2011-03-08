@@ -87,6 +87,7 @@ package mvc {
 		def write(text: String): this.type = { response.getOutputStream.write(text.getBytes(defaultEncoding)); this }
 		def write(bytes: Array[Byte]): this.type = { response.getOutputStream.write(bytes); this }
 		def flush(): this.type = { response.getOutputStream.flush(); this }
+		def redirect(uri: String) = response.sendRedirect(uri)
 	}
 
 	class RichSession(session: HttpSession)

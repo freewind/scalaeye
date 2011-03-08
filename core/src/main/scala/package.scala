@@ -8,7 +8,7 @@ import org.clapper.classutil._
 import net.lag.logging.Logger
 
 /** 定义一些基础的经常用到的方法或隐式转换 */
-package object scalaeye extends ClassUtils {
+package object scalaeye extends ClassUtils with ClassAliases {
 
 	/** 快速得到当前context */
 	def context = Context.current

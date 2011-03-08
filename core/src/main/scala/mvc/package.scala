@@ -3,6 +3,7 @@ package org.scalaeye
 import org.scalaeye._
 import scala.xml._
 import scala.util.DynamicVariable
+import scala.collection.mutable.{ Map => MuMap }
 import scala.collection.JavaConversions._
 import javax.servlet._, http._
 
@@ -55,15 +56,25 @@ package mvc {
 		def filterConfig = context.getAs[FilterConfig](FILTER_CONFIG)
 		def filterConfig_=(filterConfig: FilterConfig) = context(FILTER_CONFIG) = filterConfig
 		def servletContext = filterConfig.getServletContext
+
+		private val FLASH = "scalaeye.mvc.flash"
+		def flash: FlashMap = {
+			session(FLASH) match {
+				case f: FlashMap => f
+				case _ => new FlashMap
+			}
+		}
+
 	}
 
 	/** 可让继承了该trait的类，直接使用request, response等方法，而不用加context前缀*/
 	trait MvcContext {
-		protected def request = context.request
-		protected def response = context.response
-		protected def session = context.session
-		protected def multiParams = context.multiParams
-		protected def params = context.params
+		def request = context.request
+		def response = context.response
+		def session = context.session
+		def multiParams = context.multiParams
+		def params = context.params
+		def flash = context.flash
 	}
 
 }
@@ -96,6 +107,41 @@ package mvc {
 	class RichSession(raw: HttpSession) {
 		def apply(key: String) = raw.getAttribute(key)
 		def update(key: String, value: String) = raw.setAttribute(key, value)
+	}
+
+	class FlashMap {
+		var current = MuMap[String, Any]()
+		var next = MuMap[String, Any]()
+		def apply(key: String): Any = {
+			val value = next.get(key) match {
+				case Some(v) => v
+				case _ => current.getOrElse(key, "")
+			}
+			println("########## get flash: "+key+"="+value)
+			value
+		}
+
+		def update(key: String, value: Any) = {
+			next(key) = value
+			println("########## set flash: "+key+"="+value)
+		}
+
+		def reset = {
+			current = next;
+			next = MuMap[String, Any]()
+			context.session.setAttribute("scalaeye.mvc.flash", this)
+		}
+
+		def contains(key: String) = apply(key) != None
+
+		def message = apply("scalaeye.message")
+		def message(text: String) = update("scalaeye.message", text)
+		def error = apply("scalaeye.error")
+		def error(text: String) = update("scalaeye.error", text)
+		def warn = apply("scalaeye.warn")
+		def warn(text: String) = update("scalaeye.warn", text)
+		def debug = apply("scalaeye.debug")
+		def debug(text: String) = update("scalaeye.debug", text)
 	}
 
 }

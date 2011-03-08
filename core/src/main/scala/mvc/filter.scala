@@ -69,6 +69,8 @@ class WebFilter extends Filter {
 				}
 				case _ => println("No router found")
 			}
+
+			context.flash.reset
 		}
 	}
 

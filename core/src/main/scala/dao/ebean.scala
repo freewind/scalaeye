@@ -6,7 +6,7 @@ import com.avaje.ebean._
  * 用于方便得到Ebean的server对象，该对象为线程安全的，可用于执行各种数据库操作
  */
 trait EbeanServer {
-	val ebean = Ebean.getServer(null)
+	def ebean = Ebean.getServer(null)
 }
 
 /**

@@ -1,6 +1,6 @@
 package controllers
 
-import org.scalaeye.mvc._
+import org.scalaeye._, mvc._
 import models._
 
 class Questions extends Controller("/questions") {
@@ -16,7 +16,17 @@ class Questions extends Controller("/questions") {
 
 	@post
 	def create(title: String, content: String) {
-		html("title: "+title+", content: "+content)
+		val question = new Question
+		question.title = title
+		question.content = content
+		question.save()
+		redirect("/questions/show/"+question.id)
+	}
+
+	@any("""/show/{id:\d+}""")
+	def show(id: Long) {
+		'question := Question.find(id).get
+		render("show.jade")
 	}
 
 	def insert() = {

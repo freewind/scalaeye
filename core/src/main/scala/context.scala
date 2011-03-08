@@ -49,8 +49,9 @@ object Context extends Context {
 	private val WEBAPP_ROOT = "org.scalaeye.webapp_root"
 	def webappRoot: String = getAs[String](WEBAPP_ROOT)
 	def webappRoot_=(path: String) = update(WEBAPP_ROOT, path)
-	def classesDir: String = webappRoot / "WEB-INF" / "classes"
-	def libDir: String = webappRoot / "WEB-INF" / "lib"
+	def webinfDir: String = webappRoot / "WEB-INF"
+	def classesDir: String = webinfDir / "classes"
+	def libDir: String = webinfDir / "lib"
 
 }
 

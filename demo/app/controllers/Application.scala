@@ -11,6 +11,10 @@ class Application extends Controller {
 		</ul>
 	}
 
+	any("/newsession") {
+		session("aaa") = "bbb"
+	}
+
 	any("/index") {
 		'questions := Question.find().findList()
 		render("index.jade")

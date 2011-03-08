@@ -9,6 +9,9 @@ html
 	body
 		.header
 			.logo ScalaEye问与答
+		.session
+			| [#{session("aaa")}]
+			a(href="/newsession") new session
 		hr/
 		.main
 			!= body

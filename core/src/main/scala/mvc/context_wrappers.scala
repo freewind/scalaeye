@@ -32,3 +32,50 @@ class RichSession(raw: HttpSession) {
 	def update(key: String, value: String) = raw.setAttribute(key, value)
 }
 
+/** cookie的包装类 */
+class RichCookie(raw: Cookie) {}
+
+/**
+ * 提供了读取设置request, response, multiParams, params的方法
+ */
+class MvcContextWraper(context: Context) { mvc =>
+	private val REQUEST = "scalaeye.mvc.request"
+	def request = context.getAs[HttpServletRequest](REQUEST)
+	def request_=(request: HttpServletRequest) = context(REQUEST) = request
+
+	private val RESPONSE = "scalaeye.mvc.response"
+	def response = context.getAs[HttpServletResponse](RESPONSE)
+	def response_=(response: HttpServletResponse) = context(RESPONSE) = response
+
+	private val MULTI_PARAMS = "scalaeye.mvc.multiParams"
+	def multiParams = context.getAs[MultiParams](MULTI_PARAMS, Map.empty).withDefaultValue(Seq.empty)
+	def multiParams_=(multiParams: MultiParams) = context(MULTI_PARAMS) = multiParams
+	def params = new SingleParams { def multiParams = mvc.multiParams }
+
+	private val FILTER_CONFIG = "scalaeye.mvc.filterConfig"
+	def filterConfig = context.getAs[FilterConfig](FILTER_CONFIG)
+	def filterConfig_=(filterConfig: FilterConfig) = context(FILTER_CONFIG) = filterConfig
+	def servletContext = filterConfig.getServletContext
+
+	def flash: FlashMap = {
+		session(FlashMap.SESSION_KEY) match {
+			case f: FlashMap => f
+			case _ => new FlashMap
+		}
+	}
+
+	def session = request.getSession()
+	def cookies = request.getCookies().toList
+
+}
+
+/** 可让继承了该trait的类，直接使用request, response等方法，而不用加context前缀*/
+trait MvcContext {
+	def request = context.request
+	def response = context.response
+	def session = context.session
+	def cookies = context.cookies
+	def multiParams = context.multiParams
+	def params = context.params
+	def flash = context.flash
+}

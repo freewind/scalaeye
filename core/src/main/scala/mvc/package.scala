@@ -40,56 +40,7 @@ package object mvc {
 	implicit def response2rich(response: HttpServletResponse) = new RichResponse(response)
 	implicit def session2rich(session: HttpSession) = new RichSession(session)
 	implicit def context2mvc(context: Context) = new MvcContextWraper(context)
-}
-
-/**
- * 给org.scalaeye的Context增加一些功能
- */
-package mvc {
-
-	/**
-	 * 提供了读取设置request, response, multiParams, params的方法
-	 */
-	class MvcContextWraper(context: Context) { mvc =>
-		private val REQUEST = "scalaeye.mvc.request"
-		def request = context.getAs[HttpServletRequest](REQUEST)
-		def request_=(request: HttpServletRequest) = context(REQUEST) = request
-
-		private val RESPONSE = "scalaeye.mvc.response"
-		def response = context.getAs[HttpServletResponse](RESPONSE)
-		def response_=(response: HttpServletResponse) = context(RESPONSE) = response
-
-		def session = request.getSession()
-
-		private val MULTI_PARAMS = "scalaeye.mvc.multiParams"
-		def multiParams = context.getAs[MultiParams](MULTI_PARAMS, Map.empty).withDefaultValue(Seq.empty)
-		def multiParams_=(multiParams: MultiParams) = context(MULTI_PARAMS) = multiParams
-		def params = new SingleParams { def multiParams = mvc.multiParams }
-
-		private val FILTER_CONFIG = "scalaeye.mvc.filterConfig"
-		def filterConfig = context.getAs[FilterConfig](FILTER_CONFIG)
-		def filterConfig_=(filterConfig: FilterConfig) = context(FILTER_CONFIG) = filterConfig
-		def servletContext = filterConfig.getServletContext
-
-		def flash: FlashMap = {
-			session(FlashMap.SESSION_KEY) match {
-				case f: FlashMap => f
-				case _ => new FlashMap
-			}
-		}
-
-	}
-
-	/** 可让继承了该trait的类，直接使用request, response等方法，而不用加context前缀*/
-	trait MvcContext {
-		def request = context.request
-		def response = context.response
-		def session = context.session
-		def multiParams = context.multiParams
-		def params = context.params
-		def flash = context.flash
-	}
-
+	implicit def cookie2rich(cookie: Cookie) = new RichCookie(cookie)
 }
 
 /** 用于定义一些跟http相关的函数 */

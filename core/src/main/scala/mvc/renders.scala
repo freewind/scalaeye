@@ -19,13 +19,7 @@ import org.fusesource.scalate._, servlet._
 
 package object scalate {
 
-	object PreDef {
-		def request = context.request
-		def response = context.response
-		def session = context.session
-		def multiParams = context.multiParams
-		def params = context.params
-	}
+	object PreDef extends MvcContext
 
 	object config extends Config {
 		def getServletContext = context.servletContext

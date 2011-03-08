@@ -20,6 +20,7 @@ class Questions extends Controller("/questions") {
 		question.title = title
 		question.content = content
 		question.save()
+		flash.message("问题发表成功")
 		redirect("/questions/show/"+question.id)
 	}
 
@@ -29,6 +30,4 @@ class Questions extends Controller("/questions") {
 		render("show.jade")
 	}
 
-	def insert() = {
-	}
 }

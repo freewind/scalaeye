@@ -1,8 +1,6 @@
 package org
 
 import javax.servlet._, http._
-import scala.collection._
-import scala.collection.mutable.{ Map => MuMap }
 import scala.util.DynamicVariable
 import java.io.File
 import org.apache.commons.lang._
@@ -10,7 +8,7 @@ import org.clapper.classutil._
 import net.lag.logging.Logger
 
 /** 定义一些基础的经常用到的方法或隐式转换 */
-package object scalaeye extends AnyRef with ClassUtils {
+package object scalaeye extends ClassUtils {
 
 	/** 快速得到当前context */
 	def context = Context.current
@@ -89,11 +87,20 @@ package scalaeye {
 			if (clsname.endsWith("$")) { // it's an object
 				val clazz = Class.forName(clsname)
 				clazz.getField("MODULE$").get(clazz).asInstanceOf[T]
-			} else { // class
+			} else { // classpa
 				Class.forName(clsname).newInstance().asInstanceOf[T]
 			}
 		}
 
+	}
+
+	trait ClassAliases {
+		type JInteger = java.lang.Integer
+		type JLong = java.lang.Long
+		type JByte = java.lang.Byte
+		type JList[T] = java.util.List[T]
+		type JSet[T] = java.util.Set[T]
+		type JMap[K, V] = java.util.Map[K, V]
 	}
 
 }

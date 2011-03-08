@@ -1,6 +1,6 @@
 package controllers
 
-import org.scalaeye.mvc._
+import org.scalaeye._, mvc._
 import models._
 
 class Application extends Controller {
@@ -8,7 +8,6 @@ class Application extends Controller {
 	any("/") {
 		<ul>
 			<li><a href="/index">使用scalate版首页</a></li>
-			<li><a href="/jsp/">jsp view support</a></li>
 		</ul>
 	}
 

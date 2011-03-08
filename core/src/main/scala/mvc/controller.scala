@@ -34,7 +34,7 @@ abstract class Controller(pathPrefix: String = "") extends Init with MvcContext 
 	 * 如果继承的Controller的pathPrefix不为空，如class Users extends Controller("/aaaa")，将在render("abc.jade")时，
 	 * 将在WEB-INF/views/users/下去寻找。
 	 */
-	private def getControllerDir = if (pathPrefix.isBlank) "" else this.getClass.getSimpleName.toLowerCase+"/"
+	private def getControllerDir = if (pathPrefix.isBlank) "" else "/"+this.getClass.getSimpleName.toLowerCase
 	override def viewBaseDir = super.viewBaseDir + getControllerDir+"/"
 
 	/** 使用any/get/post/put/delete等直接定义router时，使用的Action类*/

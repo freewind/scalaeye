@@ -44,6 +44,8 @@ package mvc {
 		def response = context.getAs[HttpServletResponse](RESPONSE)
 		def response_=(response: HttpServletResponse) = context(RESPONSE) = response
 
+		def session = request.getSession()
+
 		private val MULTI_PARAMS = "scalaeye.mvc.multiParams"
 		def multiParams = context.getAs[MultiParams](MULTI_PARAMS, Map.empty).withDefaultValue(Seq.empty)
 		def multiParams_=(multiParams: MultiParams) = context(MULTI_PARAMS) = multiParams
@@ -59,6 +61,7 @@ package mvc {
 	trait MvcContext {
 		protected def request = context.request
 		protected def response = context.response
+		protected def session = context.session
 		protected def multiParams = context.multiParams
 		protected def params = context.params
 	}
@@ -68,29 +71,32 @@ package mvc {
 /** request, response等的包装类 */
 package mvc {
 
-	class RichRequest(request: HttpServletRequest) {
+	class RichRequest(raw: HttpServletRequest) {
 
 		/** 将request中的各参数变为一个MultiParams*/
 		def getParams(): MultiParams = {
 			val params = scala.collection.mutable.Map[String, Seq[String]]()
-			val names = request.getParameterNames
+			val names = raw.getParameterNames
 			while (names.hasMoreElements) {
 				val name = names.nextElement.asInstanceOf[String]
-				params += (name -> request.getParameterValues(name).toList)
+				params += (name -> raw.getParameterValues(name).toList)
 			}
 			Map[String, Seq[String]]() ++ params
 		}
 	}
 
-	class RichResponse(response: HttpServletResponse) extends Mime {
-		def setContentType(contentType: String): this.type = { response.setContentType(contentType); this }
-		def write(text: String): this.type = { response.getOutputStream.write(text.getBytes(defaultEncoding)); this }
-		def write(bytes: Array[Byte]): this.type = { response.getOutputStream.write(bytes); this }
-		def flush(): this.type = { response.getOutputStream.flush(); this }
-		def redirect(uri: String) = response.sendRedirect(uri)
+	class RichResponse(raw: HttpServletResponse) extends Mime {
+		def setContentType(contentType: String): this.type = { raw.setContentType(contentType); this }
+		def write(text: String): this.type = { raw.getOutputStream.write(text.getBytes(defaultEncoding)); this }
+		def write(bytes: Array[Byte]): this.type = { raw.getOutputStream.write(bytes); this }
+		def flush(): this.type = { raw.getOutputStream.flush(); this }
+		def redirect(uri: String) = raw.sendRedirect(uri)
 	}
 
-	class RichSession(session: HttpSession)
+	class RichSession(raw: HttpSession) {
+		def apply(key: String) = raw.getAttribute(key)
+		def update(key: String, value: String) = raw.setAttribute(key, value)
+	}
 
 }
 

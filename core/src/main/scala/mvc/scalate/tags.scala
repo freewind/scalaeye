@@ -9,4 +9,11 @@ object BuiltInTags extends ScalateTagSupport {
 	def in(layoutPath: String) = {
 		renderContext.attributes("layout") = "/WEB-INF" / "views" / layoutPath
 	}
+
+	def stylesheet(path: String) =
+		<link rel="stylesheet" type="text/css" media="screen" href={ AppConfig.app.publicDir+"/stylesheets/"+path+".css" }/>
+
+	def script(path: String) =
+		<script src={ AppConfig.app.publicDir+"/javascripts/"+path+".js" } type="text/javascript" charset="utf-8"></script>
 }
+

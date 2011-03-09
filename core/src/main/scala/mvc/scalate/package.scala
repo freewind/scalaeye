@@ -17,7 +17,9 @@ package object scalate {
 	}
 	val engine = new ServletTemplateEngine(ScalateConfig)
 
-	val DEFAULT_IMPORTS = engine.importStatements ++ List("import org.scalaeye._, mvc._, dao._", "import controllers._",
+	val DEFAULT_IMPORTS = engine.importStatements ++ List(
+		"import org.scalaeye._, mvc._, dao._",
+		"import controllers._",
 		"import models._")
 
 	trait ScalateTagSupport

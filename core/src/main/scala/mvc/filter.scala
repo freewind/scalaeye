@@ -24,7 +24,6 @@ import scala.xml.Elem
 // 		<dispatcher>INCLUDE</dispatcher>
 // 		<dispatcher>ERROR</dispatcher>
 // 	</filter-mapping>
-
 class WebFilter extends Filter {
 
 	/** 当该filter被载入时，该函数将被调用 */
@@ -45,7 +44,6 @@ class WebFilter extends Filter {
 
 		// 在新Context环境中执行
 		Context.execInNew {
-
 			context.request = request
 			context.response = response
 
@@ -55,21 +53,24 @@ class WebFilter extends Filter {
 			val method = request.getMethod()
 			val uri = request.getRequestURI()
 
-			// 寻找匹配的router，并调用其对应的action
-			// 即get()/post()等函数最后一个参数体，或controller中的各public方法
-			Routers.findMatch(method, uri) match {
-				case Some(data) => {
-					context.multiParams = request.getParams() ++ (data.params transform { (k, v) => Seq(v) })
+			if (uri.startsWith(context.servletContext.getContextPath + AppConfig.app.publicDir)) {
+				chain.doFilter(req, res)
+			} else {
+				// 寻找匹配的router，并调用其对应的action
+				// 即get()/post()等函数最后一个参数体，或controller中的各public方法
+				Routers.findMatch(method, uri) match {
+					case Some(data) => {
+						context.multiParams = request.getParams() ++ (data.params transform { (k, v) => Seq(v) })
 
-					data.router.action.perform() match {
-						case n if n == null => // 忽略
-						case _: Unit => // 忽略
-						case v => response.asHtml().write(v.toString).flush()
+						data.router.action.perform() match {
+							case n if n == null => // 忽略
+							case _: Unit => // 忽略
+							case v => response.asHtml().write(v.toString).flush()
+						}
 					}
+					case _ => println("No router found")
 				}
-				case _ => println("No router found")
 			}
-
 			context.flash.reset
 		}
 	}

@@ -1,6 +1,11 @@
 import sbt._
+import fi.jawsy.sbtplugins.jrebel.JRebelWebPlugin
 
 class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
+
+	val commons_lang = "commons-lang" % "commons-lang" % "2.6" % "compile->default"
+	val commons_io = "commons-io" % "commons-io" % "2.0.1" % "compile->default"
+	val parboiled_java = "org.parboiled" % "parboiled-java" % "0.10.1"
 
 	lazy val core = project("core", "core", new CoreProject(_))
 
@@ -16,6 +21,9 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 		val commons_io = "commons-io" % "commons-io" % "2.0.1" % "compile->default"
 		// "commons-codec" % "commons-codec" % "1.4" % "compile->default",
 		// "commons-collections" % "commons-collections" % "3.2.1" % "compile->default",
+
+		// for windsass
+		val parboiled_java = "org.parboiled" % "parboiled-java" % "0.10.1"
 
 		val scalate = "org.fusesource.scalate" % "scalate-core" % "1.4.1" % "compile"
 
@@ -49,15 +57,7 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 	}
 
 	lazy val demo = project("demo", "demo", new DemoProject(_), core, jsp)
-	class DemoProject(info: ProjectInfo) extends DefaultWebProject(info) with ScalaEyeStandardProject {
-		// 解决编译java文件时，未使用utf8字符集导致中文乱码的问题
-		override def javaCompileOptions = super.javaCompileOptions ++ javaCompileOptions("-encoding", "utf8")
-
-		override val jettyPort = 8080
-
-		// 配合jrebel，让jetty不再自动重载
-		override val scanDirectories = Nil
-	}
+	class DemoProject(info: ProjectInfo) extends DefaultWebProject(info) with ScalaEyeStandardProject
 
 	trait ScalaEyeStandardProject extends DefaultWebProject {
 		override def mainScalaSourcePath = "app"
@@ -76,8 +76,20 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 
 		private def copyViews = task { FileUtilities.sync(viewsDir, webappPath / "WEB-INF" / "views", log) } describedAs BasicScalaProject.CopyResourcesDescription
 
-		override def prepareWebappAction = super.prepareWebappAction.dependsOn(copyViews)
+		val sassDir = mainScalaSourcePath / "sass"
+		def sass2css = task {
+			//import org.scalaeye.sass._
+			None
+		}
+		override def prepareWebappAction = super.prepareWebappAction.dependsOn(copyViews, sass2css)
+
+		// 解决编译java文件时，未使用utf8字符集导致中文乱码的问题
+		override def javaCompileOptions = super.javaCompileOptions ++ javaCompileOptions("-encoding", "utf8")
+
+		override val jettyPort = 8080
+
+		// 只有当classes改变时，才重载
+		override val scanDirectories = jettyWebappPath / "WEB-INF" / "classes" :: Nil
 	}
 
 }
-

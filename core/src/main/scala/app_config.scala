@@ -69,16 +69,21 @@ object AppConfig extends Init with ReloadableOnRequest {
 	def get(key: String): Option[ConfigMap] = config.getConfigMap(key)
 
 	/** 得到预定义的各块 */
-	def app: ConfigMap = { config.configMap("app") }
-	def db: ConfigMap = { config.configMap("db") }
-	def log: ConfigMap = { config.configMap("log") }
-	def plugins: ConfigMap = { config.configMap("plugins") }
-	def cache: ConfigMap = { config.configMap("cache") }
-	def mail: ConfigMap = { config.configMap("mail") }
+	//	def app: ConfigMap = { config.configMap("app") }
+	//	def db: ConfigMap = { config.configMap("db") }
+	//	def log: ConfigMap = { config.configMap("log") }
+	//	def plugins: ConfigMap = { config.configMap("plugins") }
+	//	def cache: ConfigMap = { config.configMap("cache") }
+	//	def mail: ConfigMap = { config.configMap("mail") }
 
 	/** 当前是否处于dev或test或prod模式*/
 	def inDev: Boolean = this.mode == "dev"
 	def inTest: Boolean = this.mode == "test"
 	def inProd: Boolean = this.mode == "prod"
+
+	object app {
+		var publicDir = "/public"
+		var scanPaths = "/WEB-INF/classes"
+	}
 
 }

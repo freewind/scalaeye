@@ -20,8 +20,8 @@ class Initializer extends ServletContextListener {
 
 	/** 当前web应用被载入时，该函数将被调用，仅调用一次 */
 	def contextInitialized(event: ServletContextEvent) {
-		Context.servletContextEvent = event
-		Context.webappRoot = event.getServletContext.getRealPath("/")
+		mvc.servletContextEvent = event
+		mvc.webappRoot = event.getServletContext.getRealPath("/")
 
 		initOnStartup()
 	}

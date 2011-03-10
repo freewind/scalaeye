@@ -10,8 +10,11 @@ import net.lag.logging.Logger
 /** 定义一些基础的经常用到的方法或隐式转换 */
 package object scalaeye extends ClassUtils with ClassAliases {
 
-	/** 快速得到当前context */
-	def context = Context.current
+	/** 使用DynamicVariable这个强大的线程安全的容器 */
+	val _context = new DynamicVariable[Context](null)
+
+	/** 得到容器中的当前context */
+	def context = _context value
 
 	/** 全局logger*/
 	val logger = Logger.get("org.scalaeye")
@@ -87,7 +90,7 @@ package scalaeye {
 	trait ClassUtils {
 
 		// 搜索WEB-INF/classes下的class文件，lib暂不考虑（太慢）
-		val finder = ClassFinder(List(new File(Context.classesDir)))
+		val finder = ClassFinder(List(new File(mvc.classesDir)))
 		def classes = finder.getClasses
 
 		/** 得到某个类的子类 */
@@ -115,6 +118,8 @@ package scalaeye {
 		type JList[T] = java.util.List[T]
 		type JSet[T] = java.util.Set[T]
 		type JMap[K, V] = java.util.Map[K, V]
+		type MMap[K, V] = scala.collection.mutable.Map[K,V]
+		val MMap = scala.collection.mutable.Map
 	}
 
 }

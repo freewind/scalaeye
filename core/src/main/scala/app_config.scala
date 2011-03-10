@@ -49,7 +49,7 @@ object AppConfig extends Init with ReloadableOnRequest {
 	/** 重新导入配置文件 */
 	def load(mode: String = this.mode) {
 		this._mode = mode
-		Configgy.configure(Context.classesDir / (mode+".conf"))
+		Configgy.configure(mvc.classesDir / (mode+".conf"))
 		this.config = Configgy.config
 	}
 

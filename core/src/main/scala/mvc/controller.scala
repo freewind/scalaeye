@@ -27,7 +27,7 @@ import scalaj.reflect._
  * 所有在Controller子类中定义了的route，都将在web server启动时，被自动寻找并处理（因为它继承了Init类）
  *
  */
-abstract class Controller(pathPrefix: String = "") extends MvcContext with ScalateRender { controller =>
+abstract class Controller(pathPrefix: String = "") extends MvcContext with DefaultRender with ScalateRender { controller =>
 
 	/**
 	 * 如果用户的Controller是继承Controller()或Controller("")，将其在 render("abc.jade")时，将在WEB-INF/views目录下去找。

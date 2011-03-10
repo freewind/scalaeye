@@ -1,5 +1,9 @@
 package org.scalaeye.mvc
 
+import javax.servlet._, http._
+import org.scalaeye._, mvc._
+import scala.util.DynamicVariable
+
 /** 该trait提供了一些函数，只操作MultiParams中的第一个值 */
 trait SingleParams {
 
@@ -14,7 +18,7 @@ trait SingleParams {
 		}
 	}
 
-	/** 可能过()来取值 */
+	/** 可通过()来取值 */
 	def apply(key: String): Option[String] = {
 		get(key)
 	}

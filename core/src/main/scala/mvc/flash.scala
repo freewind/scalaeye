@@ -1,7 +1,6 @@
 package org.scalaeye.mvc
 
-import org.scalaeye._
-import scala.collection.mutable.{ Map => MMap }
+import org.scalaeye._, mvc._
 
 /** 为Flash的支持预定一些key */
 object FlashMap {
@@ -24,7 +23,7 @@ import FlashMap._
  *
  * 因为flash是跨请求的，所以需要将它放入到session中
  */
-class FlashMap {
+class FlashMap extends MvcContext {
 	/** 保存的其实是前一次request中的数据*/
 	var current = MMap[String, Any]()
 
@@ -46,7 +45,7 @@ class FlashMap {
 	def reset = {
 		current = next;
 		next = MMap[String, Any]()
-		context.session.setAttribute(SESSION_KEY, this)
+		session.setAttribute(SESSION_KEY, this)
 	}
 
 	/** 判断是否包含某值 */

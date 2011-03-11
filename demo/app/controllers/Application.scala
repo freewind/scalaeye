@@ -2,6 +2,7 @@ package controllers
 
 import org.scalaeye._, mvc._
 import models._
+import org.fusesource.scalate.support._
 
 class Application extends Controller {
 
@@ -9,6 +10,22 @@ class Application extends Controller {
 		<ul>
 			<li><a href="/index">使用scalate版首页</a></li>
 		</ul>
+	}
+
+	any("/scalate") {
+		<ul>
+			<li>ClassLoader.getSystemClassLoader:{ ClassLoader.getSystemClassLoader }</li>
+			<li>ContextLoader:{ Thread.currentThread.getContextClassLoader }</li>
+			<li>ScalateCompiler loader:{ classOf[ScalaCompiler].getClassLoader }</li>
+		</ul>
+	}
+
+	any("/xxx") {
+		"XXX"
+	}
+
+	any("/yyy") {
+		"YYY"
 	}
 
 	any("/newsession") {

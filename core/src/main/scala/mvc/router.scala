@@ -168,17 +168,17 @@ object Routers extends Init with ReloadableOnRequest {
 
 	/** 重新导入所有的routers，通常用于dev模式 */
 	def reload() {
+		logger.info("Reloading routers ...")
 		clear()
-		findSubclassesOf[Controller] map { clsname =>
+		val controllers = findSubclassesOf[Controller]
+		logger.info("Found "+controllers.size+" controllers")
+		controllers foreach { clsname => logger.info("- "+clsname) }
+		controllers map { clsname =>
 			getObjectOrCreateInstanceOf[Controller](clsname).init()
 		}
-		print()
-	}
-
-	/** 打印出当前的routers信息*/
-	def print() {
+		logger.info("Current routers: ")
 		getRouters foreach { r =>
-			logger.info("router: "+r.toString)
+			logger.info("- "+r.toString)
 		}
 	}
 

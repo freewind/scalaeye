@@ -24,13 +24,6 @@ package object scalaeye extends ClassUtils with ClassAliases {
 	implicit def string2rich(str: String) = new RichString(str)
 	implicit def string2path(str: String) = new PathHelper(str)
 
-	/** 当web应用被载入时执行 */
-	def initOnStartup() = {
-		findSubclassesOf[Init] foreach { clsname =>
-			getObjectOrCreateInstanceOf[Init](clsname).init()
-		}
-	}
-
 	/** 在dev模式下，当每个新的请求到来时执行 */
 	def reloadOnRequest() = {
 		findSubclassesOf[ReloadableOnRequest] foreach { clsname =>
@@ -90,7 +83,7 @@ package scalaeye {
 	trait ClassUtils {
 
 		// 搜索WEB-INF/classes下的class文件，lib暂不考虑（太慢）
-		val finder = ClassFinder(List(new File(mvc.classesDir)))
+		def finder = ClassFinder(List(new File(mvc.classesDir)))
 		def classes = finder.getClasses
 
 		/** 得到某个类的子类 */

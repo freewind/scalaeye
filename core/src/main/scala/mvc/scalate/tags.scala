@@ -3,7 +3,7 @@ package org.scalaeye.mvc.scalate
 import org.scalaeye._, mvc._, scalate._
 
 /** 内建的scalate tags，可直接在scalate中调用 */
-object BuiltInTags extends ScalateTagSupport {
+class BuiltInTags extends ScalateTagSupport {
 
 	/** 使用一个layout */
 	def in(layoutPath: String) = {

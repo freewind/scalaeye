@@ -53,11 +53,11 @@ class WebFilter extends Filter with MvcContext {
 
 	/** 真正的处理类，注意后面引入的trait的顺序 */
 	class WebHandler extends ActionHandler
-		with ScalateContextSupport
 		with ParamsSupport
 		with ReqResContextSupport
 		with ContextSupport
 		with PublicDirSupport
+		with RouterReloadSupport
 
 	/** 当该filter被载入时，该函数将被调用 */
 	def init(filterConfig: FilterConfig) {
@@ -138,6 +138,13 @@ trait ContextSupport extends Handler {
 			super.handle(req, res, chain)
 			logger.debug("leave: context")
 		}
+	}
+}
+
+trait RouterReloadSupport extends Handler {
+	abstract override def handle(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
+		if (AppConfig.inDev) { Routers.reload() }
+		super.handle(req, res, chain)
 	}
 }
 

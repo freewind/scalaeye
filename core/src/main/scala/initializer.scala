@@ -22,12 +22,24 @@ class Initializer extends ServletContextListener {
 	def contextInitialized(event: ServletContextEvent) {
 		mvc.servletContextEvent = event
 		mvc.webappRoot = event.getServletContext.getRealPath("/")
+		logger.info("Webapp Root: "+mvc.webappRoot)
 
 		initOnStartup()
 	}
 
 	/** 当前web应用被关闭时，该函数将被调用，目前为空 */
 	def contextDestroyed(event: ServletContextEvent) {}
+
+	/** 当web应用被载入时执行 */
+	private def initOnStartup() = {
+		logger.info("Initializing on startup ...")
+		val initClasses = findSubclassesOf[Init]
+		logger.info("Found "+initClasses.size+" subclasses of "+classOf[Init].getName)
+		initClasses foreach { clsname => logger.info("- "+ clsname) }
+		initClasses foreach { clsname =>
+			getObjectOrCreateInstanceOf[Init](clsname).init()
+		}
+	}
 
 }
 

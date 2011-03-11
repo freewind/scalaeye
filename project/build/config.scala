@@ -76,7 +76,7 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 		val viewsDir = mainScalaSourcePath / "views"
 		override def watchPaths = super.watchPaths +++ (viewsDir ** "*")
 
-		private def copyViews = task { FileUtilities.sync(viewsDir, webappPath / "WEB-INF" / "views", log) } describedAs BasicScalaProject.CopyResourcesDescription
+		private def copyViews = task { FileUtilities.sync(viewsDir, jettyWebappPath / "WEB-INF" / "views", log) } describedAs BasicScalaProject.CopyResourcesDescription
 
 		val sassDir = mainScalaSourcePath / "sass"
 		def sass2css = task {

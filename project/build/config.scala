@@ -1,5 +1,4 @@
 import sbt._
-import fi.jawsy.sbtplugins.jrebel.JRebelWebPlugin
 
 class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 
@@ -59,6 +58,9 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 	lazy val demo = project("demo", "demo", new DemoProject(_), core, jsp)
 	class DemoProject(info: ProjectInfo) extends DefaultWebProject(info) with ScalaEyeStandardProject
 
+//	lazy val zhidao_it = project("zhidao.it", "zhidao", new ZhidaoProject(_), core)
+//	class ZhidaoProject(info: ProjectInfo) extends DefaultWebProject(info) with ScalaEyeStandardProject
+
 	trait ScalaEyeStandardProject extends DefaultWebProject {
 		override def mainScalaSourcePath = "app"
 		override def mainResourcesPath = "conf"
@@ -89,7 +91,7 @@ class ScalaeyeProject(info: ProjectInfo) extends ParentProject(info) {
 		override val jettyPort = 8080
 
 		// 只有当classes改变时，才重载
-		override val scanDirectories = jettyWebappPath / "WEB-INF" / "classes" :: Nil
+		override val scanDirectories = Nil // jettyWebappPath / "WEB-INF" / "classes" :: Nil
 	}
 
 }
